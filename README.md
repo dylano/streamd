@@ -1,75 +1,77 @@
-# React + TypeScript + Vite
+# StreamD
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal TV show tracker for managing shows across streaming services.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + TypeScript + Vite
+- Cloudflare Pages (frontend + API)
+- Cloudflare D1 (SQLite database)
+- TMDB API (show metadata)
+- Vitest + Testing Library (tests)
+- MSW (API mocking)
 
-## React Compiler
+## Local Development
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+```bash
+# Install dependencies
+npm install
 
-Note: This will impact Vite dev & build performances.
+# Start dev server (with HMR + API + D1)
+npm run dev
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Reset local database and start fresh
+npm run db:reset
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Local dev runs at http://localhost:8788
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development with HMR |
+| `npm run build` | Build for production |
+| `npm start` | Serve production build locally |
+| `npm run db:reset` | Wipe local DB and restart |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run tests in watch mode |
+| `npm run test:run` | Run tests once |
+
+## Environment Variables
+
+Create `.env.local` for local development (gitignored):
+
 ```
+TMDB_API_KEY=your_key_here
+```
+
+For production, set `TMDB_API_KEY` in Cloudflare Pages dashboard under Settings → Environment variables.
+
+## Cloudflare Deployment
+
+### First-time setup
+
+1. Create a Cloudflare account
+2. Create D1 database:
+   ```bash
+   npx wrangler login
+   npx wrangler d1 create streamd-db
+   ```
+3. Update `wrangler.toml` with the database_id from step 2
+4. Connect your GitHub repo to Cloudflare Pages:
+   - Dashboard → Workers & Pages → Create → Pages → Connect to Git
+   - Build command: `npm run build`
+   - Output directory: `dist`
+5. Add D1 binding in Pages settings:
+   - Settings → Functions → D1 database bindings
+   - Variable name: `DB`
+   - Database: `streamd-db`
+
+### Deploying updates
+
+Push to main — Cloudflare auto-deploys.
+
+## Attribution
+
+This product uses the TMDB API but is not endorsed or certified by TMDB.
