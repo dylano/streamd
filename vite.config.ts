@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vite-plus";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import babel from "@rolldown/plugin-babel";
 import { execSync } from "child_process";
@@ -13,6 +13,17 @@ function getGitCommit() {
 
 // https://vite.dev/config/
 export default defineConfig({
+  staged: {
+    "*": "vp check --fix",
+  },
+  fmt: {},
+  lint: {
+    plugins: ["typescript", "react"],
+    ignorePatterns: ["dist", "**/*.test.{ts,tsx}", "**/test/**"],
+    rules: {
+      "no-undef": "off", // TypeScript handles this
+    },
+  },
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
   define: {
     __BUILD_COMMIT__: JSON.stringify(getGitCommit()),

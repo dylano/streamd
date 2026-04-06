@@ -22,9 +22,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
     await ensureSchema(context.env.DB);
 
-    const result = await context.env.DB.prepare(
-      "SELECT COUNT(*) as count FROM shows"
-    ).first<{ count: number }>();
+    const result = await context.env.DB.prepare("SELECT COUNT(*) as count FROM shows").first<{
+      count: number;
+    }>();
 
     return Response.json({
       status: "ok",
@@ -44,7 +44,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
           error: error instanceof Error ? error.message : "Unknown error",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

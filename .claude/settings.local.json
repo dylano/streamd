@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(pkill:*)",
+      "Bash(npx msw init:*)",
+      "Bash(vp lint:*)",
+      "Bash(npx vp build:*)",
+      "Bash(npm run build:*)",
+      "Bash(vp test run:*)"
     ]
   }
 }

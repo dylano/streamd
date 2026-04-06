@@ -4,7 +4,7 @@
 
 Personal TV show tracker with Cloudflare Pages + D1 backend. Syncs across devices, uses TMDB for metadata.
 
-**Stack:** Vite 8 + React 19 + TypeScript | Cloudflare Pages + Workers + D1 | TMDB API
+**Stack:** Vite+ (Vite 8 + Vitest + Oxlint) + React 19 + TypeScript | Cloudflare Pages + Workers + D1 | TMDB API
 
 ---
 
@@ -153,6 +153,7 @@ TMDB_API_KEY = "<set in dashboard, not here>"
 ## Implementation Phases
 
 ### Phase 1: Infrastructure
+
 1. Add wrangler.toml and schema/schema.sql
 2. Create `functions/_middleware.ts` (D1 binding, CORS)
 3. Install dependencies (react-router-dom, idb, wrangler)
@@ -160,6 +161,7 @@ TMDB_API_KEY = "<set in dashboard, not here>"
 5. Create Layout, Header, Navigation components
 
 ### Phase 2: Core API + Shows
+
 6. Create `functions/api/shows/index.ts` and `[id].ts`
 7. Create `functions/api/tmdb/search.ts` and `show/[id].ts`
 8. Build ShowsContext for global state
@@ -167,12 +169,14 @@ TMDB_API_KEY = "<set in dashboard, not here>"
 10. Build Dashboard (currently watching grid)
 
 ### Phase 3: Episode Tracking
+
 11. Create `functions/api/episodes/` routes
 12. Build ShowDetail page with season/episode lists
 13. Implement mark watched functionality
 14. Build Watchlist and History pages
 
 ### Phase 4: Polish
+
 15. Build NewEpisodes page (unwatched aired episodes)
 16. Add export functionality
 17. Add offline support with IndexedDB
@@ -183,65 +187,68 @@ TMDB_API_KEY = "<set in dashboard, not here>"
 
 ## Files to Modify
 
-| File | Action |
-|------|--------|
-| `src/App.tsx` | Replace with Router + Layout shell |
-| `src/index.css` | Add app-specific CSS variables |
-| `package.json` | Add dependencies |
-| `.gitignore` | Add wrangler local files |
+| File            | Action                             |
+| --------------- | ---------------------------------- |
+| `src/App.tsx`   | Replace with Router + Layout shell |
+| `src/index.css` | Add app-specific CSS variables     |
+| `package.json`  | Add dependencies                   |
+| `.gitignore`    | Add wrangler local files           |
 
 ---
 
 ## Files to Create
 
-| File | Purpose |
-|------|---------|
-| `wrangler.toml` | Cloudflare config |
-| `schema/schema.sql` | Database schema |
-| `functions/_middleware.ts` | D1 binding, CORS |
-| `functions/api/shows/index.ts` | List/create shows |
-| `functions/api/shows/[id].ts` | Single show CRUD |
-| `functions/api/episodes/index.ts` | List episodes |
-| `functions/api/episodes/[id].ts` | Mark watched |
-| `functions/api/tmdb/search.ts` | Proxy TMDB search |
-| `functions/api/tmdb/show/[id].ts` | Proxy show details |
-| `functions/api/export/index.ts` | JSON export |
-| `src/components/layout/Layout.tsx` | App shell |
-| `src/components/layout/Header.tsx` | Top bar |
-| `src/components/layout/Navigation.tsx` | Nav links |
-| `src/components/ui/Button.tsx` | Button component |
-| `src/components/ui/Card.tsx` | Card component |
-| `src/components/shows/ShowCard.tsx` | Show display |
-| `src/components/shows/ShowGrid.tsx` | Grid layout |
-| `src/components/shows/ShowSearch.tsx` | Search UI |
-| `src/components/shows/EpisodeRow.tsx` | Episode list item |
-| `src/pages/Dashboard.tsx` | Currently watching |
-| `src/pages/Watchlist.tsx` | Backlog |
-| `src/pages/History.tsx` | Completed/dropped |
-| `src/pages/NewEpisodes.tsx` | Unwatched |
-| `src/pages/ShowDetail.tsx` | Full show view |
-| `src/pages/Search.tsx` | Add shows |
-| `src/pages/Settings.tsx` | Export |
-| `src/context/ShowsContext.tsx` | Global state |
-| `src/hooks/useShows.ts` | Show operations |
-| `src/hooks/useEpisodes.ts` | Episode operations |
-| `src/hooks/useTMDB.ts` | TMDB API |
-| `src/api/client.ts` | Fetch wrapper |
-| `src/types/show.ts` | Show types |
-| `src/types/episode.ts` | Episode types |
-| `src/types/tmdb.ts` | TMDB types |
-| `src/utils/images.ts` | Image URL helpers |
+| File                                   | Purpose            |
+| -------------------------------------- | ------------------ |
+| `wrangler.toml`                        | Cloudflare config  |
+| `schema/schema.sql`                    | Database schema    |
+| `functions/_middleware.ts`             | D1 binding, CORS   |
+| `functions/api/shows/index.ts`         | List/create shows  |
+| `functions/api/shows/[id].ts`          | Single show CRUD   |
+| `functions/api/episodes/index.ts`      | List episodes      |
+| `functions/api/episodes/[id].ts`       | Mark watched       |
+| `functions/api/tmdb/search.ts`         | Proxy TMDB search  |
+| `functions/api/tmdb/show/[id].ts`      | Proxy show details |
+| `functions/api/export/index.ts`        | JSON export        |
+| `src/components/layout/Layout.tsx`     | App shell          |
+| `src/components/layout/Header.tsx`     | Top bar            |
+| `src/components/layout/Navigation.tsx` | Nav links          |
+| `src/components/ui/Button.tsx`         | Button component   |
+| `src/components/ui/Card.tsx`           | Card component     |
+| `src/components/shows/ShowCard.tsx`    | Show display       |
+| `src/components/shows/ShowGrid.tsx`    | Grid layout        |
+| `src/components/shows/ShowSearch.tsx`  | Search UI          |
+| `src/components/shows/EpisodeRow.tsx`  | Episode list item  |
+| `src/pages/Dashboard.tsx`              | Currently watching |
+| `src/pages/Watchlist.tsx`              | Backlog            |
+| `src/pages/History.tsx`                | Completed/dropped  |
+| `src/pages/NewEpisodes.tsx`            | Unwatched          |
+| `src/pages/ShowDetail.tsx`             | Full show view     |
+| `src/pages/Search.tsx`                 | Add shows          |
+| `src/pages/Settings.tsx`               | Export             |
+| `src/context/ShowsContext.tsx`         | Global state       |
+| `src/hooks/useShows.ts`                | Show operations    |
+| `src/hooks/useEpisodes.ts`             | Episode operations |
+| `src/hooks/useTMDB.ts`                 | TMDB API           |
+| `src/api/client.ts`                    | Fetch wrapper      |
+| `src/types/show.ts`                    | Show types         |
+| `src/types/episode.ts`                 | Episode types      |
+| `src/types/tmdb.ts`                    | TMDB types         |
+| `src/utils/images.ts`                  | Image URL helpers  |
 
 ---
 
 ## Local Development
 
 ```bash
-# Run frontend + API together
-npx wrangler pages dev --d1=DB -- npm run dev
+# Run frontend (port 5173) + API (port 8788) together
+npm run dev
+
+# Run frontend only with mock API (no wrangler needed)
+npm run dev:mock
 
 # Apply schema to local D1
-npx wrangler d1 execute streamd-db --local --file=schema/schema.sql
+npx wrangler d1 execute DB --local --file=schema/schema.sql
 ```
 
 ---

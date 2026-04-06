@@ -4,12 +4,11 @@ Personal TV show tracker for managing shows across streaming services.
 
 ## Tech Stack
 
-- React 19 + TypeScript + Vite
+- React 19 + TypeScript + Vite+ (unified toolchain: Vite + Vitest + Oxlint)
 - Cloudflare Pages (frontend + API)
 - Cloudflare D1 (SQLite database)
 - TMDB API (show metadata)
-- Vitest + Testing Library (tests)
-- MSW (API mocking)
+- MSW (API mocking for dev/tests)
 
 ## Local Development
 
@@ -17,26 +16,30 @@ Personal TV show tracker for managing shows across streaming services.
 # Install dependencies
 npm install
 
-# Start dev server (with HMR + API + D1)
+# Start dev server (frontend + API + D1)
 npm run dev
+
+# Start with mock API (no wrangler needed)
+npm run dev:mock
 
 # Reset local database and start fresh
 npm run db:reset
 ```
 
-Local dev runs at http://localhost:8788
+Dev server runs at http://localhost:5173 (API proxied to port 8788)
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Development with HMR |
-| `npm run build` | Build for production |
-| `npm start` | Serve production build locally |
-| `npm run db:reset` | Wipe local DB and restart |
-| `npm run lint` | Run ESLint |
-| `npm test` | Run tests in watch mode |
-| `npm run test:run` | Run tests once |
+| Command            | Description                    |
+| ------------------ | ------------------------------ |
+| `npm run dev`      | Frontend + API with HMR        |
+| `npm run dev:mock` | Frontend with MSW mock API     |
+| `npm run build`    | Build for production           |
+| `npm start`        | Serve production build locally |
+| `npm run db:reset` | Wipe local DB and restart      |
+| `npm run lint`     | Run Oxlint (via Vite+)         |
+| `npm test`         | Run tests in watch mode        |
+| `npm run test:run` | Run tests once                 |
 
 ## Environment Variables
 

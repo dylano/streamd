@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import { useState, useEffect } from "react";
+import "./App.css";
 
 interface HealthResponse {
   status: string;
@@ -17,7 +17,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/health')
+    fetch("/api/health")
       .then((res) => res.json())
       .then((data) => {
         setHealth(data);
@@ -41,13 +41,11 @@ function App() {
         {health && (
           <dl className="status-list">
             <dt>API Status</dt>
-            <dd className={health.status === 'ok' ? 'success' : 'error'}>
-              {health.status}
-            </dd>
+            <dd className={health.status === "ok" ? "success" : "error"}>{health.status}</dd>
 
             <dt>Database</dt>
-            <dd className={health.database.connected ? 'success' : 'error'}>
-              {health.database.connected ? 'Connected' : 'Disconnected'}
+            <dd className={health.database.connected ? "success" : "error"}>
+              {health.database.connected ? "Connected" : "Disconnected"}
             </dd>
 
             {health.database.connected && (
