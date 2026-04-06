@@ -1,0 +1,65 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+h1 {
+  font-size: 48px;
+  margin: 0;
+  color: var(--text-h);
+}
+
+.subtitle {
+  color: var(--text);
+  margin: 8px 0 48px;
+  font-size: 18px;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 0 0 16px;
+  color: var(--text-h);
+}
+
+.status-card {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: left;
+}
+
+.status-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  margin: 0;
+}
+
+.status-list dt {
+  color: var(--text);
+}
+
+.status-list dd {
+  margin: 0;
+  color: var(--text-h);
+}
+
+.success {
+  color: #22c55e;
+}
+
+.error {
+  color: #ef4444;
+}
+
+.loading {
+  color: var(--text);
+}
+
+.attribution {
+  margin-top: 48px;
+  font-size: 12px;
+  color: var(--text);
+}

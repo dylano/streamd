@@ -1,0 +1,8 @@
+name = "streamd"
+compatibility_date = "2025-04-01"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "streamd-db"
+database_id = "5a81ab52-66c8-46d7-a289-19cc4c7607fb"
