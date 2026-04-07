@@ -19,6 +19,8 @@ export function Navigation() {
       await api.post("/shows/sync", {});
       // Navigate to dashboard to see results (forces refresh)
       navigate("/");
+    } catch {
+      // Sync failed silently - user can retry
     } finally {
       setSyncing(false);
     }

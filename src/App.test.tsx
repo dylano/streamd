@@ -8,12 +8,17 @@ describe("App", () => {
     expect(screen.getByText("StreamD")).toBeInTheDocument();
   });
 
-  it("fetches and displays health status", async () => {
+  it("renders navigation links", async () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText("mock")).toBeInTheDocument();
-      expect(screen.getByText("Connected")).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Watchlist" })).toBeInTheDocument();
     });
+  });
+
+  it("renders TMDB attribution footer", () => {
+    render(<App />);
+    expect(screen.getByText(/TMDB API/)).toBeInTheDocument();
   });
 });

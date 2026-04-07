@@ -11,7 +11,8 @@
       "Bash(npm run db:reset:*)",
       "Bash(curl:*)",
       "Bash(jq:*)",
-      "Bash(npx wrangler d1 execute:*)"
+      "Bash(npx wrangler d1 execute:*)",
+      "Bash(npm test:*)"
     ]
   }
 }
