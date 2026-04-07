@@ -126,3 +126,22 @@ export function parseStreamingProviders(json: string | null): StreamingProvider[
     return [];
   }
 }
+
+export function useTMDBTrending() {
+  const [results, setResults] = useState<TMDBSearchResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchTrending = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await api.get<TMDBSearchResponse>("/tmdb/trending");
+      setResults(data);
+    } catch {
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { results, loading, fetchTrending };
+}

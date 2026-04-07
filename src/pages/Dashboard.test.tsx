@@ -4,12 +4,15 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
+import { SettingsProvider } from "../context/SettingsContext";
 import { Dashboard } from "./Dashboard";
 
 function renderDashboard() {
   return render(
     <MemoryRouter>
-      <Dashboard />
+      <SettingsProvider>
+        <Dashboard />
+      </SettingsProvider>
     </MemoryRouter>,
   );
 }

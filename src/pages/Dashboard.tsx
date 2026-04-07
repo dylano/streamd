@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
-import { parseStreamingProviders } from "../hooks/useTMDB";
+import { parseStreamingProviders, useTMDBTrending } from "../hooks/useTMDB";
+import { useSettings } from "../context/SettingsContext";
 import type { UnwatchedEpisode } from "../types";
 import styles from "./Dashboard.module.css";
 
@@ -20,6 +21,8 @@ export function Dashboard() {
   const [episodes, setEpisodes] = useState<UnwatchedEpisode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { results: trending, fetchTrending } = useTMDBTrending();
+  const { settings } = useSettings();
 
   const fetchEpisodes = useCallback(async () => {
     try {
@@ -35,7 +38,8 @@ export function Dashboard() {
 
   useEffect(() => {
     void fetchEpisodes();
-  }, [fetchEpisodes]);
+    void fetchTrending();
+  }, [fetchEpisodes, fetchTrending]);
 
   async function handleMarkWatched(episodeId: number) {
     await api.put(`/episodes/${episodeId}`, { watched: true });
@@ -102,6 +106,29 @@ export function Dashboard() {
 
   const showsWithExtra = groups.filter((g) => g.additionalEpisodes.length > 0);
 
+  const trendingSection = settings.showTrending && trending && trending.results.length > 0 && (
+    <section className={styles.section}>
+      <h2>Trending</h2>
+      <div className={styles.trendingGrid}>
+        {trending.results.slice(0, 4).map((show) => (
+          <Link
+            key={show.id}
+            to={`/watchlist?search=${encodeURIComponent(show.name)}`}
+            className={styles.trendingItem}
+          >
+            {show.poster_path && (
+              <img
+                src={getPosterUrl(show.poster_path, "w185") ?? ""}
+                alt={show.name}
+                className={styles.trendingPoster}
+              />
+            )}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+
   return (
     <div className={styles.page}>
       {groups.length === 0 ? (
@@ -110,6 +137,7 @@ export function Dashboard() {
           <Link to="/watchlist" className={styles.link}>
             Add shows to track
           </Link>
+          {trendingSection}
         </div>
       ) : (
         <>
@@ -204,6 +232,8 @@ export function Dashboard() {
               </div>
             </section>
           )}
+
+          {trendingSection}
         </>
       )}
     </div>

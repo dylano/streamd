@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useTMDBSearch } from "../../hooks/useTMDB";
 import { useShows } from "../../context/ShowsContext";
 import { SearchResult } from "./SearchResult";
@@ -8,7 +9,16 @@ const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_MS = 400;
 
 export function ShowSearch() {
-  const [query, setQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQuery = searchParams.get("search") ?? "";
+  const [query, setQuery] = useState(initialQuery);
+
+  // Clear URL param after reading it
+  useEffect(() => {
+    if (searchParams.has("search")) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   const { results, loading, error, search, clear } = useTMDBSearch();
   const { shows } = useShows();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

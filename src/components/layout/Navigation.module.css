@@ -15,7 +15,13 @@
   list-style: none;
 }
 
-.syncButton {
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconButton {
   width: 32px;
   height: 32px;
   border: none;
@@ -30,16 +36,22 @@
     background 0.15s,
     color 0.15s;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
-.syncButton:hover:not(:disabled) {
+.iconButton:hover:not(:disabled) {
   background: var(--code-bg);
   color: var(--text-h);
 }
 
-.syncButton:disabled {
+.iconButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.iconButton.active {
+  color: var(--accent);
+  border-bottom: none;
 }
 
 .spinning {

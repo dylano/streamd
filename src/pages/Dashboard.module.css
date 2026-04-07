@@ -249,3 +249,29 @@
   font-size: 12px;
   color: var(--text);
 }
+
+/* Trending section */
+.trendingGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 150px));
+  justify-content: center;
+  gap: 12px;
+}
+
+.trendingItem {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+
+.trendingItem:hover {
+  transform: scale(1.03);
+}
+
+.trendingPoster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}

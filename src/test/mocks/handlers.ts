@@ -263,4 +263,55 @@ export const handlers = [
       })),
     });
   }),
+
+  http.get("/api/tmdb/trending", () => {
+    return HttpResponse.json({
+      page: 1,
+      results: [
+        {
+          id: 101,
+          name: "Trending Show 1",
+          poster_path: "/trend1.jpg",
+          overview: "Trending 1",
+          first_air_date: "2024-01-01",
+          vote_average: 8.5,
+          popularity: 200,
+        },
+        {
+          id: 102,
+          name: "Trending Show 2",
+          poster_path: "/trend2.jpg",
+          overview: "Trending 2",
+          first_air_date: "2024-02-01",
+          vote_average: 8.2,
+          popularity: 180,
+        },
+        {
+          id: 103,
+          name: "Trending Show 3",
+          poster_path: "/trend3.jpg",
+          overview: "Trending 3",
+          first_air_date: "2024-03-01",
+          vote_average: 8.0,
+          popularity: 160,
+        },
+        {
+          id: 104,
+          name: "Trending Show 4",
+          poster_path: "/trend4.jpg",
+          overview: "Trending 4",
+          first_air_date: "2024-04-01",
+          vote_average: 7.8,
+          popularity: 140,
+        },
+      ],
+      total_pages: 1,
+      total_results: 4,
+    });
+  }),
+
+  // Dev
+  http.post("/api/dev/reset", () => {
+    return HttpResponse.json({ success: true, message: "Database reset complete" });
+  }),
 ];
