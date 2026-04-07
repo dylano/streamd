@@ -21,6 +21,7 @@ export function Dashboard() {
   const [episodes, setEpisodes] = useState<UnwatchedEpisode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [markingIds, setMarkingIds] = useState<Set<number>>(new Set());
   const { results: trending, fetchTrending } = useTMDBTrending();
   const { settings } = useSettings();
 
@@ -42,8 +43,16 @@ export function Dashboard() {
   }, [fetchEpisodes, fetchTrending]);
 
   async function handleMarkWatched(episodeId: number) {
+    if (markingIds.has(episodeId)) return;
+    setMarkingIds((prev) => new Set(prev).add(episodeId));
     await api.put(`/episodes/${episodeId}`, { watched: true });
+    await new Promise((resolve) => setTimeout(resolve, 300));
     setEpisodes((prev) => prev.filter((ep) => ep.id !== episodeId));
+    setMarkingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(episodeId);
+      return next;
+    });
   }
 
   if (loading) {
@@ -91,23 +100,32 @@ export function Dashboard() {
   });
 
   // For each group, find the "Next Up" episode (matches bookmark) and additional episodes
-  const groups = Object.values(showGroups).map((group) => {
-    // Find the bookmarked episode (Next Up)
-    const nextUp = group.episodes.find(
-      (ep) =>
-        ep.season_number === group.current_season && ep.episode_number === group.current_episode,
-    );
-    // If no bookmark match, fall back to first episode by order
-    const nextUpEpisode = nextUp ?? group.episodes[0];
-    // Additional episodes are everything except the Next Up
-    const additionalEpisodes = group.episodes.filter((ep) => ep.id !== nextUpEpisode.id);
-    return { ...group, nextUpEpisode, additionalEpisodes };
-  });
+  const groups = Object.values(showGroups)
+    .map((group) => {
+      // Find the bookmarked episode (Next Up)
+      const nextUp = group.episodes.find(
+        (ep) =>
+          ep.season_number === group.current_season && ep.episode_number === group.current_episode,
+      );
+      // If no bookmark match, fall back to first episode by order
+      const nextUpEpisode = nextUp ?? group.episodes[0];
+      // Additional episodes are everything except the Next Up
+      const additionalEpisodes = group.episodes.filter((ep) => ep.id !== nextUpEpisode.id);
+      return { ...group, nextUpEpisode, additionalEpisodes };
+    })
+    // Sort by air date of next up episode (newest first)
+    .sort((a, b) => {
+      const dateA = a.nextUpEpisode.air_date ? new Date(a.nextUpEpisode.air_date).getTime() : 0;
+      const dateB = b.nextUpEpisode.air_date ? new Date(b.nextUpEpisode.air_date).getTime() : 0;
+      return dateB - dateA;
+    });
 
   const showsWithExtra = groups.filter((g) => g.additionalEpisodes.length > 0);
 
-  const trendingSection = settings.showTrending && trending && trending.results.length > 0 && (
-    <section className={styles.section}>
+  const showTrending = settings.showTrending && trending && trending.results.length > 0;
+
+  const trendingSection = showTrending && (
+    <section className={styles.trendingSection}>
       <h2>Trending</h2>
       <div className={styles.trendingGrid}>
         {trending.results.slice(0, 4).map((show) => (
@@ -129,15 +147,16 @@ export function Dashboard() {
     </section>
   );
 
+  const pageClass = showTrending ? `${styles.page} ${styles.hasTrending}` : styles.page;
+
   return (
-    <div className={styles.page}>
+    <div className={pageClass}>
       {groups.length === 0 ? (
         <div className={styles.empty}>
           <p>You're all caught up!</p>
           <Link to="/watchlist" className={styles.link}>
             Add shows to track
           </Link>
-          {trendingSection}
         </div>
       ) : (
         <>
@@ -146,8 +165,12 @@ export function Dashboard() {
             <div className={styles.nextUpList}>
               {groups.map((group) => {
                 const ep = group.nextUpEpisode;
+                const isMarking = markingIds.has(ep.id);
                 return (
-                  <div key={group.show_id} className={styles.nextUpItem}>
+                  <div
+                    key={ep.id}
+                    className={`${styles.nextUpItem} ${isMarking ? styles.marking : ""}`}
+                  >
                     <Link to={`/show/${group.show_id}`} className={styles.showLink}>
                       {group.show_poster_path && (
                         <img
@@ -180,8 +203,9 @@ export function Dashboard() {
                         />
                       )}
                       <button
-                        className={styles.watchButton}
+                        className={`${styles.watchButton} ${isMarking ? styles.checked : ""}`}
                         onClick={() => handleMarkWatched(ep.id)}
+                        disabled={isMarking}
                         title="Mark as watched"
                         type="button"
                       >
@@ -232,10 +256,9 @@ export function Dashboard() {
               </div>
             </section>
           )}
-
-          {trendingSection}
         </>
       )}
+      {trendingSection}
     </div>
   );
 }
