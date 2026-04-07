@@ -13,7 +13,7 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "Watchlist" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "My Shows" })).toBeInTheDocument();
     });
   });
 

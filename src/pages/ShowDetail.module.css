@@ -52,7 +52,10 @@
 }
 
 .meta {
-  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 12px;
 }
 
 .bookmark {
@@ -66,18 +69,15 @@
   color: var(--accent);
 }
 
-.actions {
-  display: flex;
-  gap: 12px;
-}
-
 .deleteButton {
-  padding: 8px 16px;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
   color: #ef4444;
   background: transparent;
   border: 1px solid #ef4444;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -174,9 +174,5 @@
 
   .poster {
     width: 120px;
-  }
-
-  .actions {
-    justify-content: center;
   }
 }

@@ -5,7 +5,7 @@ import styles from "./Navigation.module.css";
 
 const navItems = [
   { to: "/", label: "Dashboard" },
-  { to: "/watchlist", label: "Watchlist" },
+  { to: "/watchlist", label: "My Shows" },
 ];
 
 export function Navigation() {

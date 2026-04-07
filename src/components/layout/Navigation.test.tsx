@@ -31,7 +31,7 @@ describe("Navigation", () => {
   it("renders navigation links", () => {
     renderNavigation();
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
-    expect(screen.getByText("Watchlist")).toBeInTheDocument();
+    expect(screen.getByText("My Shows")).toBeInTheDocument();
   });
 
   it("renders sync button", () => {
@@ -92,6 +92,6 @@ describe("Navigation", () => {
   it("links have correct hrefs", () => {
     renderNavigation();
     expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("link", { name: "Watchlist" })).toHaveAttribute("href", "/watchlist");
+    expect(screen.getByRole("link", { name: "My Shows" })).toHaveAttribute("href", "/watchlist");
   });
 });
