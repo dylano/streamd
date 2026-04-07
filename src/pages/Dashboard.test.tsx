@@ -45,15 +45,16 @@ describe("Dashboard", () => {
     expect(screen.getByText(/My Bad/)).toBeInTheDocument();
   });
 
-  it("shows network info when available", async () => {
+  it("shows streaming provider icons when available", async () => {
     renderDashboard();
 
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText(/Hulu/)).toBeInTheDocument();
-    expect(screen.getByText(/Max/)).toBeInTheDocument();
+    // Provider icons show as img elements with alt text
+    expect(screen.getByAltText("Hulu")).toBeInTheDocument();
+    expect(screen.getByAltText("Max")).toBeInTheDocument();
   });
 
   it("shows Additional Episodes section when there are more episodes", async () => {

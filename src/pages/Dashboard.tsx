@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
-import { getPosterUrl } from "../utils/images";
+import { getPosterUrl, getLogoUrl } from "../utils/images";
+import { parseStreamingProviders } from "../hooks/useTMDB";
 import type { UnwatchedEpisode } from "../types";
 import styles from "./Dashboard.module.css";
 
@@ -135,19 +136,30 @@ export function Dashboard() {
                         </span>
                         <span className={styles.epMeta}>
                           {ep.air_date && new Date(ep.air_date).toLocaleDateString()}
-                          {ep.air_date && group.show_network && " · "}
-                          {group.show_network}
                         </span>
                       </div>
                     </Link>
-                    <button
-                      className={styles.watchButton}
-                      onClick={() => handleMarkWatched(ep.id)}
-                      title="Mark as watched"
-                      type="button"
-                    >
-                      ✓
-                    </button>
+                    <div className={styles.actions}>
+                      {parseStreamingProviders(group.show_network)[0] && (
+                        <img
+                          src={
+                            getLogoUrl(parseStreamingProviders(group.show_network)[0].logo_path) ??
+                            ""
+                          }
+                          alt={parseStreamingProviders(group.show_network)[0].name}
+                          title={parseStreamingProviders(group.show_network)[0].name}
+                          className={styles.providerLogo}
+                        />
+                      )}
+                      <button
+                        className={styles.watchButton}
+                        onClick={() => handleMarkWatched(ep.id)}
+                        title="Mark as watched"
+                        type="button"
+                      >
+                        ✓
+                      </button>
+                    </div>
                   </div>
                 );
               })}

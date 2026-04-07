@@ -38,10 +38,18 @@
   margin: 0;
 }
 
-.network {
-  font-size: 13px;
-  color: var(--accent);
-  margin: 4px 0 12px;
+.providers {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+.providerLogo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
 }
 
 .overview {

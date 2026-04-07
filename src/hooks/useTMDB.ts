@@ -1,6 +1,11 @@
 import { useState, useCallback } from "react";
 import { api } from "../api/client";
-import type { TMDBSearchResponse, TMDBShowDetail, TMDBSeasonDetail } from "../types";
+import type {
+  TMDBSearchResponse,
+  TMDBShowDetail,
+  TMDBSeasonDetail,
+  TMDBWatchProvidersResponse,
+} from "../types";
 
 export function useTMDBSearch() {
   const [results, setResults] = useState<TMDBSearchResponse | null>(null);
@@ -79,4 +84,45 @@ export function useTMDBSeason() {
   }, []);
 
   return { loading, error, fetchSeason };
+}
+
+export interface StreamingProvider {
+  name: string;
+  logo_path: string;
+}
+
+export function useTMDBWatchProviders() {
+  const fetchWatchProviders = useCallback(async (showId: number, region = "US") => {
+    try {
+      const data = await api.get<TMDBWatchProvidersResponse>(
+        `/tmdb/show/${showId}/watch-providers`,
+      );
+      const regionData = data.results[region];
+      if (regionData?.flatrate && regionData.flatrate.length > 0) {
+        // Sort by display_priority (lower = more prominent) and take top 3
+        const sorted = [...regionData.flatrate].sort(
+          (a, b) => a.display_priority - b.display_priority,
+        );
+        const top3 = sorted.slice(0, 3).map((p) => ({
+          name: p.provider_name,
+          logo_path: p.logo_path,
+        }));
+        return JSON.stringify(top3);
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  return { fetchWatchProviders };
+}
+
+export function parseStreamingProviders(json: string | null): StreamingProvider[] {
+  if (!json) return [];
+  try {
+    return JSON.parse(json) as StreamingProvider[];
+  } catch {
+    return [];
+  }
 }

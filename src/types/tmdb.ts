@@ -63,3 +63,22 @@ export interface TMDBShowDetail {
   genres: { id: number; name: string }[];
   networks: { id: number; name: string; logo_path: string | null }[];
 }
+
+export interface TMDBWatchProvider {
+  provider_id: number;
+  provider_name: string;
+  logo_path: string;
+  display_priority: number;
+}
+
+export interface TMDBWatchProviderRegion {
+  link: string;
+  flatrate?: TMDBWatchProvider[];
+  buy?: TMDBWatchProvider[];
+  rent?: TMDBWatchProvider[];
+}
+
+export interface TMDBWatchProvidersResponse {
+  id: number;
+  results: Record<string, TMDBWatchProviderRegion>;
+}

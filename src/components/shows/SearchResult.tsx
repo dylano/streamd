@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getPosterUrl } from "../../utils/images";
 import { useShows } from "../../context/ShowsContext";
-import { useTMDBShow, useTMDBSeason } from "../../hooks/useTMDB";
+import { useTMDBShow, useTMDBSeason, useTMDBWatchProviders } from "../../hooks/useTMDB";
 import { api } from "../../api/client";
 import type { TMDBSearchResult, Episode } from "../../types";
 import styles from "./SearchResult.module.css";
@@ -16,6 +16,7 @@ export function SearchResult({ result, isAdded, onAdded }: SearchResultProps) {
   const { addShow } = useShows();
   const { fetchShow } = useTMDBShow();
   const { fetchSeason } = useTMDBSeason();
+  const { fetchWatchProviders } = useTMDBWatchProviders();
   const [adding, setAdding] = useState(false);
 
   const posterUrl = getPosterUrl(result.poster_path, "w154");
@@ -26,8 +27,10 @@ export function SearchResult({ result, isAdded, onAdded }: SearchResultProps) {
 
     setAdding(true);
     try {
-      const details = await fetchShow(result.id);
-      const network = details?.networks?.map((n) => n.name).join(", ") || null;
+      const [details, streamingService] = await Promise.all([
+        fetchShow(result.id),
+        fetchWatchProviders(result.id),
+      ]);
       const latestSeason = details?.number_of_seasons ?? 1;
 
       const show = await addShow({
@@ -37,7 +40,7 @@ export function SearchResult({ result, isAdded, onAdded }: SearchResultProps) {
         overview: result.overview,
         first_air_date: result.first_air_date,
         status: "watchlist",
-        streaming_service: network,
+        streaming_service: streamingService,
         total_seasons: latestSeason,
         total_episodes: details?.number_of_episodes ?? 0,
         current_season: latestSeason,

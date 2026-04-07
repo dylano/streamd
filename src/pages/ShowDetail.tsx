@@ -2,9 +2,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useShows } from "../context/ShowsContext";
 import { useEpisodes } from "../hooks/useEpisodes";
-import { useTMDBShow, useTMDBSeason } from "../hooks/useTMDB";
+import { useTMDBShow, useTMDBSeason, parseStreamingProviders } from "../hooks/useTMDB";
 import { EpisodeRow } from "../components/shows";
-import { getPosterUrl } from "../utils/images";
+import { getPosterUrl, getLogoUrl } from "../utils/images";
 import styles from "./ShowDetail.module.css";
 
 export function ShowDetail() {
@@ -49,7 +49,6 @@ export function ShowDetail() {
   const seasonEpisodes = getEpisodesBySeason(selectedSeason);
   const seasons = [...(tmdbShow?.seasons.filter((s) => s.season_number > 0) ?? [])].reverse();
   const posterUrl = getPosterUrl(show.poster_path, "w342");
-  const networks = tmdbShow?.networks ?? [];
 
   async function handleSyncSeason(seasonNumber: number) {
     if (!show || syncing) return;
@@ -97,8 +96,18 @@ export function ShowDetail() {
             <p className={styles.year}>{show.first_air_date.split("-")[0]}</p>
           )}
 
-          {networks.length > 0 && (
-            <p className={styles.network}>{networks.map((n) => n.name).join(", ")}</p>
+          {parseStreamingProviders(show.streaming_service).length > 0 && (
+            <div className={styles.providers}>
+              {parseStreamingProviders(show.streaming_service).map((p) => (
+                <img
+                  key={p.name}
+                  src={getLogoUrl(p.logo_path) ?? ""}
+                  alt={p.name}
+                  title={p.name}
+                  className={styles.providerLogo}
+                />
+              ))}
+            </div>
           )}
 
           {show.overview && <p className={styles.overview}>{show.overview}</p>}
