@@ -84,8 +84,9 @@ CREATE TABLE shows (
     streaming_service TEXT,
     total_seasons INTEGER DEFAULT 0,
     total_episodes INTEGER DEFAULT 0,
-    current_season INTEGER DEFAULT 1,
-    current_episode INTEGER DEFAULT 0,
+    -- Bookmark: next episode to watch; both NULL = caught up (see "Bookmark & watch semantics")
+    current_season INTEGER,
+    current_episode INTEGER,
     added_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -115,6 +116,16 @@ CREATE INDEX idx_shows_status ON shows(status);
 CREATE INDEX idx_episodes_show_id ON episodes(show_id);
 CREATE INDEX idx_episodes_air_date ON episodes(air_date);
 ```
+
+### Bookmark & watch semantics
+
+- **`shows.current_season` / `shows.current_episode`** store the **bookmark**: the **next** episode the user plans to watch (not “last watched”). **Both `NULL`** means **caught up** — no next episode in TMDB (through latest aired, or show ended). When there is a next episode, both columns are non-null. Episode ordering follows TMDB series order: compare `(season_number, episode_number)` lexicographically.
+- **New show:** set bookmark to the **first episode to watch** (typically **1×1** from TMDB), not `NULL`.
+- **Marking any episode as watched** is allowed. After the update, **recompute the bookmark** as the **next episode after the highest watched episode** in series order (the “highest” watched = max `(season_number, episode_number)` among rows for that show with `watched = 1`).
+- If there is **no next episode**, set **`current_season` and `current_episode` to `NULL`** and surface “caught up” / “waiting for new episodes” in the UI.
+- **Unwatching** (if supported): recompute from remaining watched rows the same way; if none watched, reset bookmark to the **first episode** (e.g. **S1E1** per TMDB), not `NULL`.
+
+Implementation note: this requires knowing **series order** for “next after highest watched.” Use TMDB episode order for the show; if that episode isn’t in D1 yet, resolve the next step via TMDB when updating the bookmark.
 
 ---
 
