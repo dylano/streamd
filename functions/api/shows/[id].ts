@@ -71,15 +71,20 @@ export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
   updates.push("updated_at = datetime('now')");
   values.push(id);
 
-  const result = await context.env.DB.prepare(
-    `UPDATE shows SET ${updates.join(", ")} WHERE id = ? RETURNING *`,
+  const updateResult = await context.env.DB.prepare(
+    `UPDATE shows SET ${updates.join(", ")} WHERE id = ?`,
   )
     .bind(...values)
-    .first<Show>();
+    .run();
 
-  if (!result) {
+  if (updateResult.meta.changes === 0) {
     return Response.json({ error: "Show not found" }, { status: 404 });
   }
+
+  // Fetch the updated show
+  const result = await context.env.DB.prepare("SELECT * FROM shows WHERE id = ?")
+    .bind(id)
+    .first<Show>();
 
   return Response.json(result);
 };
@@ -88,11 +93,9 @@ export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
 export const onRequestDelete: PagesFunction<Env, "id"> = async (context) => {
   const id = String(context.params.id);
 
-  const result = await context.env.DB.prepare("DELETE FROM shows WHERE id = ? RETURNING id")
-    .bind(id)
-    .first();
+  const result = await context.env.DB.prepare("DELETE FROM shows WHERE id = ?").bind(id).run();
 
-  if (!result) {
+  if (result.meta.changes === 0) {
     return Response.json({ error: "Show not found" }, { status: 404 });
   }
 

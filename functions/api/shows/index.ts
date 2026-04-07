@@ -70,13 +70,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "Show already exists" }, { status: 409 });
   }
 
-  const result = await context.env.DB.prepare(
+  await context.env.DB.prepare(
     `INSERT INTO shows (
       tmdb_id, name, poster_path, overview, first_air_date,
       status, streaming_service, total_seasons, total_episodes,
       current_season, current_episode
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    RETURNING *`,
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       body.tmdb_id,
@@ -91,6 +90,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       body.current_season ?? null,
       body.current_episode ?? null,
     )
+    .run();
+
+  // Fetch the inserted show
+  const result = await context.env.DB.prepare("SELECT * FROM shows WHERE tmdb_id = ?")
+    .bind(body.tmdb_id)
     .first<Show>();
 
   return Response.json(result, { status: 201 });
