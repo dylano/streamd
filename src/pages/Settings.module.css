@@ -1,0 +1,9 @@
+.page h1 {
+  font-size: 24px;
+  margin: 0 0 24px;
+  color: var(--text-h);
+}
+
+.hint {
+  color: var(--text);
+}

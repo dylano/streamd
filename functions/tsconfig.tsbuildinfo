@@ -1,1 +1,1 @@
-{"root":["./api/health.ts"],"version":"6.0.2"}
+{"root":["./_middleware.ts","./api/health.ts","./api/episodes/[id].ts","./api/episodes/index.ts","./api/episodes/unwatched.ts","./api/shows/[id].ts","./api/shows/index.ts","./api/tmdb/search.ts","./api/tmdb/show/[id].ts","./api/tmdb/show/[id]/season/[season].ts"],"version":"6.0.2"}

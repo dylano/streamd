@@ -6,11 +6,44 @@ async function ensureSchema(db) {
         tmdb_id INTEGER NOT NULL UNIQUE,
         name TEXT NOT NULL,
         poster_path TEXT,
+        overview TEXT,
+        first_air_date TEXT,
         status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
-        added_at TEXT DEFAULT (datetime('now'))
+        streaming_service TEXT,
+        total_seasons INTEGER DEFAULT 0,
+        total_episodes INTEGER DEFAULT 0,
+        current_season INTEGER,
+        current_episode INTEGER,
+        added_at TEXT DEFAULT (datetime('now')),
+        updated_at TEXT DEFAULT (datetime('now'))
+      )
+    `),
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS episodes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        show_id INTEGER NOT NULL,
+        tmdb_id INTEGER,
+        season_number INTEGER NOT NULL,
+        episode_number INTEGER NOT NULL,
+        name TEXT,
+        air_date TEXT,
+        runtime INTEGER,
+        watched INTEGER DEFAULT 0,
+        watched_at TEXT,
+        FOREIGN KEY (show_id) REFERENCES shows(id) ON DELETE CASCADE,
+        UNIQUE(show_id, season_number, episode_number)
+      )
+    `),
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS tmdb_cache (
+        cache_key TEXT PRIMARY KEY,
+        data TEXT NOT NULL,
+        expires_at TEXT NOT NULL
       )
     `),
     db.prepare(`CREATE INDEX IF NOT EXISTS idx_shows_status ON shows(status)`),
+    db.prepare(`CREATE INDEX IF NOT EXISTS idx_episodes_show_id ON episodes(show_id)`),
+    db.prepare(`CREATE INDEX IF NOT EXISTS idx_episodes_air_date ON episodes(air_date)`),
   ]);
 }
 export const onRequestGet = async (context) => {

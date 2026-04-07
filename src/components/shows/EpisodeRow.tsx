@@ -1,0 +1,32 @@
+import type { Episode } from "../../types";
+import styles from "./EpisodeRow.module.css";
+
+interface EpisodeRowProps {
+  episode: Episode;
+  onToggleWatched: (id: number, watched: boolean) => void;
+}
+
+export function EpisodeRow({ episode, onToggleWatched }: EpisodeRowProps) {
+  const isAired = episode.air_date ? new Date(episode.air_date) <= new Date() : false;
+  const formattedDate = episode.air_date ? new Date(episode.air_date).toLocaleDateString() : "TBA";
+
+  return (
+    <div className={`${styles.row} ${episode.watched ? styles.watched : ""}`}>
+      <button
+        className={styles.checkbox}
+        onClick={() => onToggleWatched(episode.id, !episode.watched)}
+        disabled={!isAired}
+        aria-label={episode.watched ? "Mark as unwatched" : "Mark as watched"}
+        type="button"
+      >
+        {episode.watched ? "✓" : ""}
+      </button>
+      <span className={styles.number}>
+        {episode.season_number}×{String(episode.episode_number).padStart(2, "0")}
+      </span>
+      <span className={styles.name}>{episode.name || "TBA"}</span>
+      <span className={styles.date}>{formattedDate}</span>
+      {episode.runtime && <span className={styles.runtime}>{episode.runtime}m</span>}
+    </div>
+  );
+}

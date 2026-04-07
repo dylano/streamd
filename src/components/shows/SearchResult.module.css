@@ -1,0 +1,84 @@
+.result {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--code-bg);
+  border-radius: 8px;
+  align-items: flex-start;
+}
+
+.poster {
+  width: 80px;
+  flex-shrink: 0;
+  aspect-ratio: 2 / 3;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 8px;
+}
+
+.year {
+  font-weight: 400;
+  color: var(--text);
+}
+
+.overview {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.addButton {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.addButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.addButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,182 @@
+.page {
+  max-width: 800px;
+}
+
+.error {
+  color: #ef4444;
+  text-align: center;
+  padding: 48px;
+}
+
+.header {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.poster {
+  width: 150px;
+  height: auto;
+  border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.info {
+  flex: 1;
+}
+
+.info h1 {
+  font-size: 24px;
+  margin: 0 0 4px;
+  color: var(--text-h);
+}
+
+.year {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+}
+
+.network {
+  font-size: 13px;
+  color: var(--accent);
+  margin: 4px 0 12px;
+}
+
+.overview {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.meta {
+  margin-bottom: 16px;
+}
+
+.bookmark {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.deleteButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #ef4444;
+  background: transparent;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.seasons {
+  background: var(--code-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.seasonTabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.seasonTab {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.seasonTab:hover {
+  background: var(--border);
+}
+
+.seasonTab.active {
+  background: var(--accent);
+  color: white;
+}
+
+.episodeList {
+  padding: 0;
+}
+
+.episodeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.syncButton {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.syncButton:hover:not(:disabled) {
+  background: var(--accent-bg);
+}
+
+.syncButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text);
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .poster {
+    width: 120px;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+}

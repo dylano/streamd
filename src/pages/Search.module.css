@@ -1,0 +1,44 @@
+.page h1 {
+  font-size: 24px;
+  margin: 0 0 24px;
+  color: var(--text-h);
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--text);
+}
+
+.status {
+  color: var(--text);
+  text-align: center;
+  padding: 24px;
+}
+
+.error {
+  color: #ef4444;
+  text-align: center;
+  padding: 24px;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}

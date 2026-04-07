@@ -7,7 +7,11 @@
       "Bash(vp lint:*)",
       "Bash(npx vp build:*)",
       "Bash(npm run build:*)",
-      "Bash(vp test run:*)"
+      "Bash(vp test run:*)",
+      "Bash(npm run db:reset:*)",
+      "Bash(curl:*)",
+      "Bash(jq:*)",
+      "Bash(npx wrangler d1 execute:*)"
     ]
   }
 }
