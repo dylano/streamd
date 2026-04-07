@@ -11,9 +11,6 @@ export function Layout() {
       <main className={styles.main}>
         <Outlet />
       </main>
-      <footer className={styles.footer}>
-        This product uses the TMDB API but is not endorsed or certified by TMDB.
-      </footer>
     </div>
   );
 }

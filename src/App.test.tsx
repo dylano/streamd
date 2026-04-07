@@ -16,9 +16,4 @@ describe("App", () => {
       expect(screen.getByRole("link", { name: "My Shows" })).toBeInTheDocument();
     });
   });
-
-  it("renders TMDB attribution footer", () => {
-    render(<App />);
-    expect(screen.getByText(/TMDB API/)).toBeInTheDocument();
-  });
 });

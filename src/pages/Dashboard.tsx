@@ -44,7 +44,6 @@ export function Dashboard() {
   if (loading) {
     return (
       <div className={styles.page}>
-        <h1>Dashboard</h1>
         <p className={styles.loading}>Loading...</p>
       </div>
     );
@@ -53,7 +52,6 @@ export function Dashboard() {
   if (error) {
     return (
       <div className={styles.page}>
-        <h1>Dashboard</h1>
         <p className={styles.error}>{error}</p>
       </div>
     );
@@ -105,8 +103,6 @@ export function Dashboard() {
 
   return (
     <div className={styles.page}>
-      <h1>Dashboard</h1>
-
       {groups.length === 0 ? (
         <div className={styles.empty}>
           <p>You're all caught up!</p>

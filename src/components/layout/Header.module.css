@@ -16,3 +16,9 @@
 .logo:hover {
   color: var(--accent);
 }
+
+@media (max-width: 600px) {
+  .header {
+    display: none;
+  }
+}

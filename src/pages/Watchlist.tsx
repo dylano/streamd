@@ -8,7 +8,6 @@ export function Watchlist() {
 
   return (
     <div className={styles.page}>
-      <h1>Watchlist</h1>
       <ShowSearch />
       {loading ? (
         <p className={styles.loading}>Loading...</p>
