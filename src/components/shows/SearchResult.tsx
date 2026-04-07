@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { getPosterUrl } from "../../utils/images";
 import { useShows } from "../../context/ShowsContext";
-import { useTMDBShow } from "../../hooks/useTMDB";
-import type { TMDBSearchResult } from "../../types";
+import { useTMDBShow, useTMDBSeason } from "../../hooks/useTMDB";
+import { api } from "../../api/client";
+import type { TMDBSearchResult, Episode } from "../../types";
 import styles from "./SearchResult.module.css";
 
 interface SearchResultProps {
@@ -14,6 +15,7 @@ interface SearchResultProps {
 export function SearchResult({ result, isAdded, onAdded }: SearchResultProps) {
   const { addShow } = useShows();
   const { fetchShow } = useTMDBShow();
+  const { fetchSeason } = useTMDBSeason();
   const [adding, setAdding] = useState(false);
 
   const posterUrl = getPosterUrl(result.poster_path, "w154");
@@ -26,7 +28,9 @@ export function SearchResult({ result, isAdded, onAdded }: SearchResultProps) {
     try {
       const details = await fetchShow(result.id);
       const network = details?.networks?.map((n) => n.name).join(", ") || null;
-      await addShow({
+      const latestSeason = details?.number_of_seasons ?? 1;
+
+      const show = await addShow({
         tmdb_id: result.id,
         name: result.name,
         poster_path: result.poster_path,
@@ -34,11 +38,30 @@ export function SearchResult({ result, isAdded, onAdded }: SearchResultProps) {
         first_air_date: result.first_air_date,
         status: "watchlist",
         streaming_service: network,
-        total_seasons: details?.number_of_seasons ?? 0,
+        total_seasons: latestSeason,
         total_episodes: details?.number_of_episodes ?? 0,
-        current_season: 1,
+        current_season: latestSeason,
         current_episode: 1,
       });
+
+      // Sync the most recent season's episodes
+      if (details && latestSeason > 0) {
+        const seasonData = await fetchSeason(result.id, latestSeason);
+        if (seasonData?.episodes) {
+          await api.post<Episode[]>("/episodes", {
+            show_id: show.id,
+            episodes: seasonData.episodes.map((ep) => ({
+              tmdb_id: ep.id,
+              season_number: ep.season_number,
+              episode_number: ep.episode_number,
+              name: ep.name,
+              air_date: ep.air_date,
+              runtime: ep.runtime,
+            })),
+          });
+        }
+      }
+
       onAdded?.();
     } finally {
       setAdding(false);
