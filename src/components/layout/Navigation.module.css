@@ -5,6 +5,10 @@
   padding: 0 24px;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
 }
 
 .list {
