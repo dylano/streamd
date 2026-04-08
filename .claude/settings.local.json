@@ -14,7 +14,8 @@
       "Bash(npx wrangler d1 execute:*)",
       "Bash(npm test:*)",
       "Bash(find:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

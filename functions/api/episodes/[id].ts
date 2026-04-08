@@ -111,6 +111,16 @@ export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
     .bind(watchedValue, watchedAt, id)
     .run();
 
+  // When marking as watched, also mark all earlier episodes in the same season
+  if (body.watched) {
+    await context.env.DB.prepare(
+      `UPDATE episodes SET watched = 1, watched_at = COALESCE(watched_at, ?)
+       WHERE show_id = ? AND season_number = ? AND episode_number < ? AND watched = 0`,
+    )
+      .bind(watchedAt, episode.show_id, episode.season_number, episode.episode_number)
+      .run();
+  }
+
   // Recompute bookmark
   await recomputeBookmark(context.env.DB, episode.show_id);
 

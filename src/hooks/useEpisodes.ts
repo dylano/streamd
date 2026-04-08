@@ -54,16 +54,24 @@ export function useEpisodes(showId: number | null) {
     [showId],
   );
 
-  const markWatched = useCallback(async (episodeId: number, watched: boolean) => {
-    try {
-      const updated = await api.put<Episode>(`/episodes/${episodeId}`, { watched });
-      setEpisodes((prev) => prev.map((ep) => (ep.id === episodeId ? updated : ep)));
-      return updated;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update episode");
-      throw err;
-    }
-  }, []);
+  const markWatched = useCallback(
+    async (episodeId: number, watched: boolean) => {
+      try {
+        const updated = await api.put<Episode>(`/episodes/${episodeId}`, { watched });
+        setEpisodes((prev) => prev.map((ep) => (ep.id === episodeId ? updated : ep)));
+        // Backend marks earlier episodes in the season too — re-fetch to sync local state
+        if (watched && showId) {
+          const data = await api.get<Episode[]>(`/episodes?show_id=${showId}`);
+          setEpisodes(data);
+        }
+        return updated;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update episode");
+        throw err;
+      }
+    },
+    [showId],
+  );
 
   const getEpisodesBySeason = useCallback(
     (seasonNumber: number) => {

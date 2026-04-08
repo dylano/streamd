@@ -76,13 +76,22 @@ describe("useEpisodes", () => {
   });
 
   it("marks episode as watched", async () => {
+    let watchedState = false;
     server.use(
       http.get("/api/episodes", () => {
         return HttpResponse.json([
-          { id: 1, show_id: 1, season_number: 1, episode_number: 1, name: "Test", watched: false },
+          {
+            id: 1,
+            show_id: 1,
+            season_number: 1,
+            episode_number: 1,
+            name: "Test",
+            watched: watchedState,
+          },
         ]);
       }),
       http.put("/api/episodes/:id", () => {
+        watchedState = true;
         return HttpResponse.json({
           id: 1,
           show_id: 1,
