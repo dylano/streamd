@@ -47,32 +47,39 @@
   color: white;
 }
 
-.number {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  min-width: 48px;
+.details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .name {
-  flex: 1;
   font-size: 14px;
   color: var(--text-h);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.meta .date {
+  margin-left: auto;
+}
+
+.number {
+  font-weight: 600;
 }
 
 .date {
-  font-size: 12px;
-  color: var(--text);
-  min-width: 80px;
-  text-align: right;
+  min-width: 0;
 }
 
 .runtime {
-  font-size: 12px;
-  color: var(--text);
-  min-width: 40px;
-  text-align: right;
+  min-width: 0;
 }

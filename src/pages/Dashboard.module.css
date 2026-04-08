@@ -112,9 +112,6 @@
 .epInfo {
   font-size: 13px;
   color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .epMeta {
@@ -124,6 +121,10 @@
   font-size: 12px;
   color: var(--text);
   opacity: 0.7;
+}
+
+.epMetaDate {
+  margin-left: auto;
 }
 
 .actions {
@@ -243,25 +244,33 @@
   border-bottom: none;
 }
 
+.epDetails {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.epName {
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.episode .epMeta {
+  opacity: 1;
+}
+
 .epNumber {
   font-size: 13px;
   font-weight: 600;
   color: var(--text);
-  min-width: 48px;
-}
-
-.epName {
-  flex: 1;
-  font-size: 14px;
-  color: var(--text-h);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .epDate {
   font-size: 12px;
   color: var(--text);
+  margin-left: auto;
 }
 
 /* Trending section - pinned to bottom */

@@ -181,12 +181,14 @@ export function Dashboard() {
                       )}
                       <div className={styles.showInfo}>
                         <span className={styles.showName}>{group.show_name}</span>
-                        <span className={styles.epInfo}>
-                          {ep.season_number}×{String(ep.episode_number).padStart(2, "0")}
-                          {ep.name && ` · ${ep.name}`}
-                        </span>
+                        <span className={styles.epInfo}>{ep.name || "TBA"}</span>
                         <span className={styles.epMeta}>
-                          {ep.air_date && new Date(ep.air_date).toLocaleDateString()}
+                          <span>
+                            {ep.season_number}×{String(ep.episode_number).padStart(2, "0")}
+                          </span>
+                          <span className={styles.epMetaDate}>
+                            {ep.air_date && new Date(ep.air_date).toLocaleDateString()}
+                          </span>
                         </span>
                       </div>
                     </Link>
@@ -241,13 +243,17 @@ export function Dashboard() {
                           >
                             ✓
                           </button>
-                          <span className={styles.epNumber}>
-                            {ep.season_number}×{String(ep.episode_number).padStart(2, "0")}
-                          </span>
-                          <span className={styles.epName}>{ep.name || "TBA"}</span>
-                          <span className={styles.epDate}>
-                            {ep.air_date ? new Date(ep.air_date).toLocaleDateString() : ""}
-                          </span>
+                          <div className={styles.epDetails}>
+                            <span className={styles.epName}>{ep.name || "TBA"}</span>
+                            <div className={styles.epMeta}>
+                              <span className={styles.epNumber}>
+                                {ep.season_number}×{String(ep.episode_number).padStart(2, "0")}
+                              </span>
+                              <span className={styles.epDate}>
+                                {ep.air_date ? new Date(ep.air_date).toLocaleDateString() : ""}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>

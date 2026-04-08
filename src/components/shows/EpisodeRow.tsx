@@ -21,12 +21,16 @@ export function EpisodeRow({ episode, onToggleWatched }: EpisodeRowProps) {
       >
         {episode.watched ? "✓" : ""}
       </button>
-      <span className={styles.number}>
-        {episode.season_number}×{String(episode.episode_number).padStart(2, "0")}
-      </span>
-      <span className={styles.name}>{episode.name || "TBA"}</span>
-      <span className={styles.date}>{formattedDate}</span>
-      {episode.runtime && <span className={styles.runtime}>{episode.runtime}m</span>}
+      <div className={styles.details}>
+        <span className={styles.name}>{episode.name || "TBA"}</span>
+        <div className={styles.meta}>
+          <span className={styles.number}>
+            {episode.season_number}×{String(episode.episode_number).padStart(2, "0")}
+          </span>
+          <span className={styles.date}>{formattedDate}</span>
+          {episode.runtime && <span className={styles.runtime}>{episode.runtime}m</span>}
+        </div>
+      </div>
     </div>
   );
 }
