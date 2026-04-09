@@ -47,18 +47,17 @@ export function Settings() {
 
         <div className={styles.setting}>
           <div className={styles.settingInfo}>
-            <span className={styles.settingLabel}>Theme</span>
-            <span className={styles.settingDesc}>Choose your preferred appearance</span>
+            <span className={styles.settingLabel}>Use dark mode</span>
+            <span className={styles.settingDesc}>Switch between light and dark appearance</span>
           </div>
-          <select
-            className={styles.select}
-            value={settings.theme}
-            onChange={(e) => updateSetting("theme", e.target.value as "system" | "light" | "dark")}
+          <button
+            className={`${styles.toggle} ${settings.theme === "dark" ? styles.on : ""}`}
+            onClick={() => updateSetting("theme", settings.theme === "dark" ? "light" : "dark")}
+            type="button"
+            aria-pressed={settings.theme === "dark"}
           >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
+            <span className={styles.toggleKnob} />
+          </button>
         </div>
       </div>
 

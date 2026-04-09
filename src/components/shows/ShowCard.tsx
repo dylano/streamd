@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { getPosterUrl } from "../../utils/images";
+import { getPosterUrl, getLogoUrl } from "../../utils/images";
+import { parseStreamingProviders } from "../../hooks/useTMDB";
 import type { Show } from "../../types";
 import styles from "./ShowCard.module.css";
 
@@ -9,6 +10,7 @@ interface ShowCardProps {
 
 export function ShowCard({ show }: ShowCardProps) {
   const posterUrl = getPosterUrl(show.poster_path, "w342");
+  const provider = parseStreamingProviders(show.streaming_service)[0];
 
   return (
     <Link to={`/show/${show.id}`} className={styles.card}>
@@ -17,6 +19,11 @@ export function ShowCard({ show }: ShowCardProps) {
           <img src={posterUrl} alt={show.name} loading="lazy" />
         ) : (
           <div className={styles.placeholder}>{show.name[0]}</div>
+        )}
+        {provider && (
+          <div className={styles.providerBadge}>
+            <img src={getLogoUrl(provider.logo_path) ?? ""} alt={provider.name} />
+          </div>
         )}
       </div>
       <div className={styles.info}>

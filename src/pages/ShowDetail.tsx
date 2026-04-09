@@ -96,17 +96,14 @@ export function ShowDetail() {
             <p className={styles.year}>{show.first_air_date.split("-")[0]}</p>
           )}
 
-          {parseStreamingProviders(show.streaming_service).length > 0 && (
+          {parseStreamingProviders(show.streaming_service)[0] && (
             <div className={styles.providers}>
-              {parseStreamingProviders(show.streaming_service).map((p) => (
-                <img
-                  key={p.name}
-                  src={getLogoUrl(p.logo_path) ?? ""}
-                  alt={p.name}
-                  title={p.name}
-                  className={styles.providerLogo}
-                />
-              ))}
+              <img
+                src={getLogoUrl(parseStreamingProviders(show.streaming_service)[0].logo_path) ?? ""}
+                alt={parseStreamingProviders(show.streaming_service)[0].name}
+                title={parseStreamingProviders(show.streaming_service)[0].name}
+                className={styles.providerLogo}
+              />
             </div>
           )}
 
