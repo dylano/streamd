@@ -10,14 +10,14 @@
   border-bottom: none;
 }
 
-.row.watched {
+.row.watched .details {
   opacity: 0.6;
 }
 
 .checkbox {
   width: 24px;
   height: 24px;
-  border: 2px solid var(--border);
+  border: 2px solid var(--text);
   border-radius: 4px;
   background: transparent;
   color: var(--accent);

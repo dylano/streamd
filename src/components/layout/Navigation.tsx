@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSync } from "../../context/SyncContext";
 import styles from "./Navigation.module.css";
 
@@ -10,6 +10,8 @@ const navItems = [
 export function Navigation() {
   const { syncing, sync } = useSync();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isShowPage = pathname.startsWith("/show/");
 
   async function handleSync() {
     await sync();
@@ -23,9 +25,10 @@ export function Navigation() {
           <li key={item.to}>
             <NavLink
               to={item.to}
-              className={({ isActive }) =>
-                isActive ? `${styles.link} ${styles.active}` : styles.link
-              }
+              className={({ isActive }) => {
+                const active = isActive || (isShowPage && item.to === "/watchlist");
+                return active ? `${styles.link} ${styles.active}` : styles.link;
+              }}
             >
               {item.label}
             </NavLink>
