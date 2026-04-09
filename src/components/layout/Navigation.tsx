@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { api } from "../../api/client";
+import { useSync } from "../../context/SyncContext";
 import styles from "./Navigation.module.css";
 
 const navItems = [
@@ -9,21 +8,12 @@ const navItems = [
 ];
 
 export function Navigation() {
-  const [syncing, setSyncing] = useState(false);
+  const { syncing, sync } = useSync();
   const navigate = useNavigate();
 
   async function handleSync() {
-    if (syncing) return;
-    setSyncing(true);
-    try {
-      await api.post("/shows/sync", {});
-      // Navigate to dashboard to see results (forces refresh)
-      navigate("/");
-    } catch {
-      // Sync failed silently - user can retry
-    } finally {
-      setSyncing(false);
-    }
+    await sync();
+    navigate("/");
   }
 
   return (
