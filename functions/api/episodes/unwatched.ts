@@ -21,7 +21,19 @@ interface UnwatchedEpisode {
 // GET /api/episodes/unwatched - Get all unwatched aired episodes
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
-    const today = new Date().toISOString().split("T")[0];
+    const url = new URL(context.request.url);
+    const tz = url.searchParams.get("tz") || "UTC";
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat("en", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(now);
+    const y = parts.find((p) => p.type === "year")!.value;
+    const m = parts.find((p) => p.type === "month")!.value;
+    const d = parts.find((p) => p.type === "day")!.value;
+    const today = `${y}-${m}-${d}`;
 
     const result = await context.env.DB.prepare(
       `SELECT

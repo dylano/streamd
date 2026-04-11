@@ -28,7 +28,10 @@ export function Dashboard() {
   const fetchEpisodes = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await api.get<UnwatchedEpisode[]>("/episodes/unwatched");
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const data = await api.get<UnwatchedEpisode[]>(
+        `/episodes/unwatched?tz=${encodeURIComponent(tz)}`,
+      );
       setEpisodes(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load episodes");
