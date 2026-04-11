@@ -12,8 +12,8 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  showTrending: true,
-  theme: "system",
+  showTrending: false,
+  theme: "dark",
 };
 
 const SettingsContext = createContext<SettingsContextType | null>(null);

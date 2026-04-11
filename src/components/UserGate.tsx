@@ -14,7 +14,7 @@ export function UserGate({ children }: { children: ReactNode }) {
   const [submitting, setSubmitting] = useState(false);
   const prevUser = useRef(user);
 
-  // Reset form state on logout (user went from non-null to null)
+  // Reset form state and navigate home on logout
   useEffect(() => {
     if (prevUser.current && !user) {
       setName("");
@@ -22,9 +22,10 @@ export function UserGate({ children }: { children: ReactNode }) {
       setPendingName("");
       setError("");
       setSubmitting(false);
+      navigate("/");
     }
     prevUser.current = user;
-  }, [user]);
+  }, [user, navigate]);
 
   if (loading) {
     return null;

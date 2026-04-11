@@ -44,10 +44,10 @@ describe("Settings", () => {
     renderSettings();
 
     const toggle = getToggleByLabel("Display trending shows");
-    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
 
     await user.click(toggle);
-    expect(toggle).toHaveAttribute("aria-pressed", "false");
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
   });
 
   it("toggles dark mode setting", async () => {
@@ -55,28 +55,16 @@ describe("Settings", () => {
     renderSettings();
 
     const toggle = getToggleByLabel("Use dark mode");
-    expect(toggle).toHaveAttribute("aria-pressed", "false");
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
 
     await user.click(toggle);
-    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("shows reset database button", () => {
+  it("shows logged in user and logout button", () => {
     renderSettings();
 
-    expect(screen.getByText("Reset Database")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Reset" })).toBeInTheDocument();
-  });
-
-  it("confirms before resetting database", async () => {
-    const user = userEvent.setup();
-    vi.spyOn(window, "confirm").mockReturnValue(false);
-
-    renderSettings();
-
-    await user.click(screen.getByRole("button", { name: "Reset" }));
-    expect(window.confirm).toHaveBeenCalledWith(
-      "This will delete all your shows and episodes. Are you sure?",
-    );
+    expect(screen.getByText(/Logged in as/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
   });
 });

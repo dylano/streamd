@@ -1,31 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useUser } from "../context/UserContext";
-import { api } from "../api/client";
 import styles from "./Settings.module.css";
 
 export function Settings() {
   const { settings, updateSetting } = useSettings();
   const { user, logout } = useUser();
-  const [resetting, setResetting] = useState(false);
-  const navigate = useNavigate();
-
-  async function handleResetDatabase() {
-    if (!confirm("This will delete all your shows and episodes. Are you sure?")) {
-      return;
-    }
-    setResetting(true);
-    try {
-      await api.post("/dev/reset", {});
-      navigate("/");
-      window.location.reload();
-    } catch {
-      alert("Failed to reset database");
-    } finally {
-      setResetting(false);
-    }
-  }
 
   return (
     <div className={styles.page}>
@@ -73,24 +52,6 @@ export function Settings() {
           </div>
           <button className={styles.secondaryButton} onClick={logout} type="button">
             Log out
-          </button>
-        </div>
-      </div>
-
-      <h2 className={styles.sectionTitle}>Developer</h2>
-      <div className={styles.section}>
-        <div className={styles.setting}>
-          <div className={styles.settingInfo}>
-            <span className={styles.settingLabel}>Reset Database</span>
-            <span className={styles.settingDesc}>Delete all shows and episodes</span>
-          </div>
-          <button
-            className={styles.dangerButton}
-            onClick={handleResetDatabase}
-            disabled={resetting}
-            type="button"
-          >
-            {resetting ? "Resetting..." : "Reset"}
           </button>
         </div>
       </div>
