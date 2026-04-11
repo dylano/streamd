@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
+import { mockUnwatchedEpisodes } from "../test/mocks/handlers";
 import { SettingsProvider } from "../context/SettingsContext";
 import { Dashboard } from "./Dashboard";
 
@@ -89,6 +90,109 @@ describe("Dashboard", () => {
     });
   });
 
+  it("sends timezone query param", async () => {
+    let capturedUrl = "";
+    server.use(
+      http.get("/api/episodes/unwatched", ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockUnwatchedEpisodes);
+      }),
+    );
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(capturedUrl).toContain("tz=");
+    });
+
+    const url = new URL(capturedUrl);
+    const tz = url.searchParams.get("tz");
+    // Should be a valid IANA timezone
+    expect(tz).toBeTruthy();
+    expect(tz).toContain("/");
+  });
+
+  it("sorts Additional Episodes alphabetically by show name", async () => {
+    server.use(
+      http.get("/api/episodes/unwatched", () => {
+        return HttpResponse.json([
+          {
+            id: 1,
+            show_id: 1,
+            show_name: "Zebra Show",
+            show_poster_path: null,
+            show_network: null,
+            show_current_season: 1,
+            show_current_episode: 1,
+            tmdb_id: 1,
+            season_number: 1,
+            episode_number: 1,
+            name: "Pilot",
+            air_date: "2024-01-01",
+            runtime: 22,
+          },
+          {
+            id: 2,
+            show_id: 1,
+            show_name: "Zebra Show",
+            show_poster_path: null,
+            show_network: null,
+            show_current_season: 1,
+            show_current_episode: 1,
+            tmdb_id: 2,
+            season_number: 1,
+            episode_number: 2,
+            name: "Second",
+            air_date: "2024-01-08",
+            runtime: 22,
+          },
+          {
+            id: 3,
+            show_id: 2,
+            show_name: "Alpha Show",
+            show_poster_path: null,
+            show_network: null,
+            show_current_season: 1,
+            show_current_episode: 1,
+            tmdb_id: 3,
+            season_number: 1,
+            episode_number: 1,
+            name: "Start",
+            air_date: "2024-02-01",
+            runtime: 22,
+          },
+          {
+            id: 4,
+            show_id: 2,
+            show_name: "Alpha Show",
+            show_poster_path: null,
+            show_network: null,
+            show_current_season: 1,
+            show_current_episode: 1,
+            tmdb_id: 4,
+            season_number: 1,
+            episode_number: 2,
+            name: "Continue",
+            air_date: "2024-02-08",
+            runtime: 22,
+          },
+        ]);
+      }),
+    );
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.getByText("Additional Episodes")).toBeInTheDocument();
+    });
+
+    // Alpha Show should come before Zebra Show
+    const section = screen.getByText("Additional Episodes").parentElement!;
+    const names = section.querySelectorAll("summary");
+    expect(names[0]).toHaveTextContent("Alpha Show");
+    expect(names[1]).toHaveTextContent("Zebra Show");
+  });
+
   it("shows empty state when no episodes", async () => {
     server.use(
       http.get("/api/episodes/unwatched", () => {
@@ -124,7 +228,7 @@ describe("Dashboard", () => {
   });
 
   it("uses bookmark to determine Next Up episode", async () => {
-    // Mock with specific bookmark values - next up should be S1E6, not S1E7
+    // Mock with specific bookmark values - bookmark points to E7, so that's Next Up
     server.use(
       http.get("/api/episodes/unwatched", () => {
         return HttpResponse.json([
