@@ -110,9 +110,8 @@ describe("Dashboard", () => {
 
     const url = new URL(capturedUrl);
     const tz = url.searchParams.get("tz");
-    // Should be a valid IANA timezone
+    // Should be a valid IANA timezone (UTC is valid but has no slash)
     expect(tz).toBeTruthy();
-    expect(tz).toContain("/");
   });
 
   it("sorts Additional Episodes alphabetically by show name", async () => {
