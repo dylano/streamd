@@ -1,6 +1,21 @@
-# StreamD
+# streamd
 
-Personal TV show tracker for managing shows across streaming services.
+TV show tracker for managing shows across streaming services. Lightweight name-based login — no passwords, no accounts.
+
+<p align="center">
+  <img src="screens/streamd-dashboard-light.png" width="300" alt="Dashboard - light mode" />
+  &nbsp;&nbsp;
+  <img src="screens/streamd-shows-dark.png" width="300" alt="My Shows - dark mode" />
+</p>
+
+## What It Does
+
+- **Search and add** TV shows from TMDB's catalog
+- **Track your progress** — mark episodes watched and your bookmark auto-advances
+- **Dashboard** shows your next unwatched episodes across all shows, sorted by air date
+- **Episode sync** pulls new episode data from TMDB automatically (or on demand)
+- **Multiple users** on the same instance with isolated watch progress — shows and episode metadata are shared, but what you're watching and where you're at is yours
+- **Streaming providers** displayed per show so you know where to watch
 
 ## Tech Stack
 
@@ -73,7 +88,7 @@ For production, set `TMDB_API_KEY` in Cloudflare Pages dashboard under Settings 
 
 ### Deploying updates
 
-Push to main — Cloudflare auto-deploys.
+Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Attribution
 
