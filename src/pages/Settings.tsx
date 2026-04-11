@@ -55,6 +55,10 @@ export function Settings() {
           </button>
         </div>
       </div>
+
+      <p className={styles.version}>
+        v{__APP_VERSION__} &middot; {__BUILD_COMMIT__}
+      </p>
     </div>
   );
 }

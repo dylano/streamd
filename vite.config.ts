@@ -2,6 +2,7 @@ import { defineConfig } from "vite-plus";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import babel from "@rolldown/plugin-babel";
 import { execSync } from "child_process";
+import pkg from "./package.json" with { type: "json" };
 
 function getGitCommit() {
   try {
@@ -26,6 +27,7 @@ export default defineConfig({
   },
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
   define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
     __BUILD_COMMIT__: JSON.stringify(getGitCommit()),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
