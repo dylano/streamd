@@ -120,7 +120,9 @@ export function Dashboard() {
       return dateB - dateA;
     });
 
-  const showsWithExtra = groups.filter((g) => g.additionalEpisodes.length > 0);
+  const showsWithExtra = groups
+    .filter((g) => g.additionalEpisodes.length > 0)
+    .sort((a, b) => a.show_name.localeCompare(b.show_name));
 
   const showTrending = settings.showTrending && trending && trending.results.length > 0;
 
