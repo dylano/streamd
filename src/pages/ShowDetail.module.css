@@ -45,11 +45,46 @@
   margin: 12px 0 16px;
 }
 
+.providerButton {
+  padding: 2px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.providerButton:hover {
+  border-color: var(--border);
+}
+
 .providerLogo {
   width: 32px;
   height: 32px;
   border-radius: 6px;
   object-fit: contain;
+  display: block;
+}
+
+.setProvider {
+  margin: 12px 0 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+  font-family: inherit;
+}
+
+.setProvider:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .overview {

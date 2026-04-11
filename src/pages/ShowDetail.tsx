@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import { useShows } from "../context/ShowsContext";
 import { useEpisodes } from "../hooks/useEpisodes";
 import { useTMDBShow, useTMDBSeason, parseStreamingProviders } from "../hooks/useTMDB";
-import { EpisodeRow } from "../components/shows";
+import { EpisodeRow, ProviderPicker } from "../components/shows";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
 import styles from "./ShowDetail.module.css";
 
 export function ShowDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { shows, deleteShow, refresh } = useShows();
+  const { shows, updateShow, deleteShow, refresh } = useShows();
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [syncing, setSyncing] = useState(false);
 
@@ -20,6 +20,7 @@ export function ShowDetail() {
   );
   const { show: tmdbShow, fetchShow: fetchTMDBShow } = useTMDBShow();
   const { fetchSeason } = useTMDBSeason();
+  const [pickingProvider, setPickingProvider] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -73,6 +74,12 @@ export function ShowDetail() {
     }
   }
 
+  async function handleSetProvider(streaming_service: string) {
+    if (!show) return;
+    await updateShow(show.id, { streaming_service });
+    setPickingProvider(false);
+  }
+
   async function handleDelete() {
     if (!show) return;
     if (confirm("Are you sure you want to remove this show?")) {
@@ -96,15 +103,36 @@ export function ShowDetail() {
             <p className={styles.year}>{show.first_air_date.split("-")[0]}</p>
           )}
 
-          {parseStreamingProviders(show.streaming_service)[0] && (
+          {pickingProvider ? (
+            <ProviderPicker
+              onSelect={handleSetProvider}
+              onCancel={() => setPickingProvider(false)}
+            />
+          ) : parseStreamingProviders(show.streaming_service)[0] ? (
             <div className={styles.providers}>
-              <img
-                src={getLogoUrl(parseStreamingProviders(show.streaming_service)[0].logo_path) ?? ""}
-                alt={parseStreamingProviders(show.streaming_service)[0].name}
-                title={parseStreamingProviders(show.streaming_service)[0].name}
-                className={styles.providerLogo}
-              />
+              <button
+                className={styles.providerButton}
+                onClick={() => setPickingProvider(true)}
+                title="Change streaming service"
+                type="button"
+              >
+                <img
+                  src={
+                    getLogoUrl(parseStreamingProviders(show.streaming_service)[0].logo_path) ?? ""
+                  }
+                  alt={parseStreamingProviders(show.streaming_service)[0].name}
+                  className={styles.providerLogo}
+                />
+              </button>
             </div>
+          ) : (
+            <button
+              className={styles.setProvider}
+              onClick={() => setPickingProvider(true)}
+              type="button"
+            >
+              Set streaming service
+            </button>
           )}
 
           {show.overview && <p className={styles.overview}>{show.overview}</p>}
