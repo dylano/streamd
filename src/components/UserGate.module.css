@@ -1,0 +1,153 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: #16171d;
+}
+
+.content {
+  text-align: center;
+}
+
+.brand {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin: 0 0 48px;
+  background: linear-gradient(135deg, #60a5fa 50%, transparent 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.panel {
+  animation: rise 0.35s ease;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field {
+  display: flex;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.field:focus-within {
+  border-color: rgba(96, 165, 250, 0.5);
+}
+
+.input {
+  flex: 1;
+  padding: 16px 20px;
+  font-size: 17px;
+  color: #f3f4f6;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.arrow {
+  padding: 16px 20px;
+  font-size: 20px;
+  color: #60a5fa;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+
+.arrow:hover:not(:disabled) {
+  color: #93bbfd;
+}
+
+.arrow:disabled {
+  color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+}
+
+.prompt {
+  color: #9ca3af;
+  font-size: 17px;
+  margin: 0 0 24px;
+}
+
+.prompt strong {
+  color: #f3f4f6;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.go {
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: #60a5fa;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+
+.go:hover:not(:disabled) {
+  background: #4f94f0;
+}
+
+.go:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.go:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.link {
+  padding: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+
+.link:hover:not(:disabled) {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.error {
+  color: #f87171;
+  font-size: 13px;
+  margin: 12px 0 0;
+}

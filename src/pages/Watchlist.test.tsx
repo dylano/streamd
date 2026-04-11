@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
+import { UserProvider } from "../context/UserContext";
 import { ShowsProvider } from "../context/ShowsContext";
 import { SettingsProvider } from "../context/SettingsContext";
 import { Watchlist } from "./Watchlist";
@@ -10,11 +11,13 @@ import { Watchlist } from "./Watchlist";
 function renderWatchlist() {
   return render(
     <MemoryRouter>
-      <SettingsProvider>
-        <ShowsProvider>
-          <Watchlist />
-        </ShowsProvider>
-      </SettingsProvider>
+      <UserProvider>
+        <SettingsProvider>
+          <ShowsProvider>
+            <Watchlist />
+          </ShowsProvider>
+        </SettingsProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }

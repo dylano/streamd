@@ -3,7 +3,7 @@ interface Env {
   TMDB_API_KEY: string;
 }
 
-interface Show {
+interface UserShow {
   id: number;
   tmdb_id: number;
   name: string;
@@ -29,12 +29,19 @@ interface TMDBShowResponse {
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
-// POST /api/shows/sync - Sync episodes for all tracked shows
+// POST /api/shows/sync - Sync episodes for this user's tracked shows
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // Get all shows
+  const userId = (context.data as { userId: number }).userId;
+
+  // Get only this user's shows
   const shows = await context.env.DB.prepare(
-    "SELECT id, tmdb_id, name, current_season FROM shows",
-  ).all<Show>();
+    `SELECT s.id, s.tmdb_id, s.name, us.current_season
+     FROM user_shows us
+     JOIN shows s ON us.show_id = s.id
+     WHERE us.user_id = ?`,
+  )
+    .bind(userId)
+    .all<UserShow>();
 
   const results: { show: string; synced: number; error?: string }[] = [];
 

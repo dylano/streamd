@@ -18,9 +18,10 @@ interface UnwatchedEpisode {
   runtime: number | null;
 }
 
-// GET /api/episodes/unwatched - Get all unwatched aired episodes
+// GET /api/episodes/unwatched - Get all unwatched aired episodes for this user
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
+    const userId = (context.data as { userId: number }).userId;
     const url = new URL(context.request.url);
     const tz = url.searchParams.get("tz") || "UTC";
     const now = new Date();
@@ -41,14 +42,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         e.name, e.air_date, e.runtime,
         s.name as show_name, s.poster_path as show_poster_path,
         s.streaming_service as show_network,
-        s.current_season as show_current_season,
-        s.current_episode as show_current_episode
-      FROM episodes e
-      JOIN shows s ON e.show_id = s.id
-      WHERE e.watched = 0 AND e.air_date IS NOT NULL AND e.air_date <= ?
+        us.current_season as show_current_season,
+        us.current_episode as show_current_episode
+      FROM user_shows us
+      JOIN shows s ON us.show_id = s.id
+      JOIN episodes e ON e.show_id = s.id
+      LEFT JOIN user_episodes ue ON e.id = ue.episode_id AND ue.user_id = ?
+      WHERE us.user_id = ?
+        AND COALESCE(ue.watched, 0) = 0
+        AND e.air_date IS NOT NULL
+        AND e.air_date <= ?
       ORDER BY e.air_date DESC, s.name, e.season_number, e.episode_number`,
     )
-      .bind(today)
+      .bind(userId, userId, today)
       .all<UnwatchedEpisode>();
 
     return Response.json(result.results);

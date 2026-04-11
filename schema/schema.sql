@@ -1,5 +1,11 @@
 -- StreamD Database Schema
 
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    created_at TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS shows (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tmdb_id INTEGER NOT NULL UNIQUE,
@@ -7,13 +13,9 @@ CREATE TABLE IF NOT EXISTS shows (
     poster_path TEXT,
     overview TEXT,
     first_air_date TEXT,
-    status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
     streaming_service TEXT,
     total_seasons INTEGER DEFAULT 0,
     total_episodes INTEGER DEFAULT 0,
-    -- Bookmark: next episode to watch; both NULL = caught up
-    current_season INTEGER,
-    current_episode INTEGER,
     added_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -27,10 +29,31 @@ CREATE TABLE IF NOT EXISTS episodes (
     name TEXT,
     air_date TEXT,
     runtime INTEGER,
-    watched INTEGER DEFAULT 0,
-    watched_at TEXT,
     FOREIGN KEY (show_id) REFERENCES shows(id) ON DELETE CASCADE,
     UNIQUE(show_id, season_number, episode_number)
+);
+
+CREATE TABLE IF NOT EXISTS user_shows (
+    user_id INTEGER NOT NULL,
+    show_id INTEGER NOT NULL,
+    status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
+    current_season INTEGER,
+    current_episode INTEGER,
+    added_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, show_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (show_id) REFERENCES shows(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_episodes (
+    user_id INTEGER NOT NULL,
+    episode_id INTEGER NOT NULL,
+    watched INTEGER DEFAULT 0,
+    watched_at TEXT,
+    PRIMARY KEY (user_id, episode_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (episode_id) REFERENCES episodes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tmdb_cache (
@@ -39,6 +62,7 @@ CREATE TABLE IF NOT EXISTS tmdb_cache (
     expires_at TEXT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_shows_status ON shows(status);
 CREATE INDEX IF NOT EXISTS idx_episodes_show_id ON episodes(show_id);
 CREATE INDEX IF NOT EXISTS idx_episodes_air_date ON episodes(air_date);
+CREATE INDEX IF NOT EXISTS idx_user_shows_user ON user_shows(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_episodes_user ON user_episodes(user_id);

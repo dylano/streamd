@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../../test/mocks/server";
+import { UserProvider } from "../../context/UserContext";
 import { SyncProvider } from "../../context/SyncContext";
 import { Navigation } from "./Navigation";
 
@@ -19,9 +20,11 @@ vi.mock("react-router-dom", async () => {
 function renderNavigation() {
   return render(
     <MemoryRouter>
-      <SyncProvider>
-        <Navigation />
-      </SyncProvider>
+      <UserProvider>
+        <SyncProvider>
+          <Navigation />
+        </SyncProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }

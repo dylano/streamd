@@ -5,15 +5,18 @@ import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
 import { mockUnwatchedEpisodes } from "../test/mocks/handlers";
+import { UserProvider } from "../context/UserContext";
 import { SettingsProvider } from "../context/SettingsContext";
 import { Dashboard } from "./Dashboard";
 
 function renderDashboard() {
   return render(
     <MemoryRouter>
-      <SettingsProvider>
-        <Dashboard />
-      </SettingsProvider>
+      <UserProvider>
+        <SettingsProvider>
+          <Dashboard />
+        </SettingsProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }

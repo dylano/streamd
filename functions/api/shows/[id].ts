@@ -19,13 +19,27 @@ interface Show {
   updated_at: string;
 }
 
-// GET /api/shows/:id - Get a single show
+function getShowForUser(db: D1Database, userId: number, showId: string) {
+  return db
+    .prepare(
+      `SELECT s.id, s.tmdb_id, s.name, s.poster_path, s.overview, s.first_air_date,
+              s.streaming_service, s.total_seasons, s.total_episodes,
+              us.status, us.current_season, us.current_episode,
+              us.added_at, us.updated_at
+       FROM user_shows us
+       JOIN shows s ON us.show_id = s.id
+       WHERE us.user_id = ? AND s.id = ?`,
+    )
+    .bind(userId, showId)
+    .first<Show>();
+}
+
+// GET /api/shows/:id - Get a single show for this user
 export const onRequestGet: PagesFunction<Env, "id"> = async (context) => {
+  const userId = (context.data as { userId: number }).userId;
   const id = String(context.params.id);
 
-  const show = await context.env.DB.prepare("SELECT * FROM shows WHERE id = ?")
-    .bind(id)
-    .first<Show>();
+  const show = await getShowForUser(context.env.DB, userId, id);
 
   if (!show) {
     return Response.json({ error: "Show not found" }, { status: 404 });
@@ -36,6 +50,7 @@ export const onRequestGet: PagesFunction<Env, "id"> = async (context) => {
 
 // PUT /api/shows/:id - Update a show
 export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
+  const userId = (context.data as { userId: number }).userId;
   const id = String(context.params.id);
   const body = await context.request.json<{
     status?: string;
@@ -44,56 +59,74 @@ export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
     current_episode?: number | null;
   }>();
 
-  const updates: string[] = [];
-  const values: (string | number | null)[] = [];
+  // Update user_shows fields (status, bookmark)
+  const userUpdates: string[] = [];
+  const userValues: (string | number | null)[] = [];
 
   if (body.status !== undefined) {
-    updates.push("status = ?");
-    values.push(body.status);
-  }
-  if (body.streaming_service !== undefined) {
-    updates.push("streaming_service = ?");
-    values.push(body.streaming_service);
+    userUpdates.push("status = ?");
+    userValues.push(body.status);
   }
   if (body.current_season !== undefined) {
-    updates.push("current_season = ?");
-    values.push(body.current_season);
+    userUpdates.push("current_season = ?");
+    userValues.push(body.current_season);
   }
   if (body.current_episode !== undefined) {
-    updates.push("current_episode = ?");
-    values.push(body.current_episode);
+    userUpdates.push("current_episode = ?");
+    userValues.push(body.current_episode);
   }
 
-  if (updates.length === 0) {
+  if (userUpdates.length > 0) {
+    userUpdates.push("updated_at = datetime('now')");
+    await context.env.DB.prepare(
+      `UPDATE user_shows SET ${userUpdates.join(", ")} WHERE user_id = ? AND show_id = ?`,
+    )
+      .bind(...userValues, userId, id)
+      .run();
+  }
+
+  // Update shows fields (shared metadata like streaming_service)
+  if (body.streaming_service !== undefined) {
+    await context.env.DB.prepare(
+      "UPDATE shows SET streaming_service = ?, updated_at = datetime('now') WHERE id = ?",
+    )
+      .bind(body.streaming_service, id)
+      .run();
+  }
+
+  if (userUpdates.length === 0 && body.streaming_service === undefined) {
     return Response.json({ error: "No fields to update" }, { status: 400 });
   }
 
-  updates.push("updated_at = datetime('now')");
-  values.push(id);
+  const result = await getShowForUser(context.env.DB, userId, id);
 
-  const updateResult = await context.env.DB.prepare(
-    `UPDATE shows SET ${updates.join(", ")} WHERE id = ?`,
-  )
-    .bind(...values)
-    .run();
-
-  if (updateResult.meta.changes === 0) {
+  if (!result) {
     return Response.json({ error: "Show not found" }, { status: 404 });
   }
-
-  // Fetch the updated show
-  const result = await context.env.DB.prepare("SELECT * FROM shows WHERE id = ?")
-    .bind(id)
-    .first<Show>();
 
   return Response.json(result);
 };
 
-// DELETE /api/shows/:id - Delete a show
+// DELETE /api/shows/:id - Remove show from user's list
 export const onRequestDelete: PagesFunction<Env, "id"> = async (context) => {
+  const userId = (context.data as { userId: number }).userId;
   const id = String(context.params.id);
 
-  const result = await context.env.DB.prepare("DELETE FROM shows WHERE id = ?").bind(id).run();
+  // Delete user_episodes for this user + show's episodes
+  await context.env.DB.prepare(
+    `DELETE FROM user_episodes WHERE user_id = ? AND episode_id IN (
+       SELECT id FROM episodes WHERE show_id = ?
+     )`,
+  )
+    .bind(userId, id)
+    .run();
+
+  // Delete user_shows relationship
+  const result = await context.env.DB.prepare(
+    "DELETE FROM user_shows WHERE user_id = ? AND show_id = ?",
+  )
+    .bind(userId, id)
+    .run();
 
   if (result.meta.changes === 0) {
     return Response.json({ error: "Show not found" }, { status: 404 });

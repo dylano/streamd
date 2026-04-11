@@ -2,6 +2,9 @@ import { http, HttpResponse } from "msw";
 import type { Show } from "../../types/show";
 import type { UnwatchedEpisode, Episode } from "../../types/episode";
 
+// Mock user
+export const mockUser = { id: 1, name: "TestUser" };
+
 // Mock data
 export const mockShows: Show[] = [
   {
@@ -114,6 +117,28 @@ export const mockEpisodes: Episode[] = [
 ];
 
 export const handlers = [
+  // Users
+  http.get("/api/users", ({ request }) => {
+    const url = new URL(request.url);
+    const name = url.searchParams.get("name");
+    if (name?.toLowerCase() === mockUser.name.toLowerCase()) {
+      return HttpResponse.json(mockUser);
+    }
+    return HttpResponse.json({ error: "User not found" }, { status: 404 });
+  }),
+
+  http.get("/api/users/:id", ({ params }) => {
+    if (Number(params.id) === mockUser.id) {
+      return HttpResponse.json(mockUser);
+    }
+    return HttpResponse.json({ error: "User not found" }, { status: 404 });
+  }),
+
+  http.post("/api/users", async ({ request }) => {
+    const body = (await request.json()) as { name: string };
+    return HttpResponse.json({ id: 2, name: body.name }, { status: 201 });
+  }),
+
   // Health check
   http.get("/api/health", () => {
     return HttpResponse.json({

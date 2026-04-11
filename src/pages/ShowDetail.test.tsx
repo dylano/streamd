@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
+import { UserProvider } from "../context/UserContext";
 import { ShowsProvider } from "../context/ShowsContext";
 import { SettingsProvider } from "../context/SettingsContext";
 import { ShowDetail } from "./ShowDetail";
@@ -15,14 +16,16 @@ afterEach(() => {
 function renderShowDetail(showId = "1") {
   return render(
     <MemoryRouter initialEntries={[`/show/${showId}`]}>
-      <SettingsProvider>
-        <ShowsProvider>
-          <Routes>
-            <Route path="/show/:id" element={<ShowDetail />} />
-            <Route path="/watchlist" element={<div>Watchlist Page</div>} />
-          </Routes>
-        </ShowsProvider>
-      </SettingsProvider>
+      <UserProvider>
+        <SettingsProvider>
+          <ShowsProvider>
+            <Routes>
+              <Route path="/show/:id" element={<ShowDetail />} />
+              <Route path="/watchlist" element={<div>Watchlist Page</div>} />
+            </Routes>
+          </ShowsProvider>
+        </SettingsProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }
