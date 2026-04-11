@@ -126,13 +126,43 @@ export function ShowDetail() {
               </button>
             </div>
           ) : (
-            <button
-              className={styles.setProvider}
-              onClick={() => setPickingProvider(true)}
-              type="button"
-            >
-              Set streaming service
-            </button>
+            <div className={styles.providers}>
+              <button
+                className={styles.providerButton}
+                onClick={() => setPickingProvider(true)}
+                title="Set streaming service"
+                type="button"
+              >
+                <svg
+                  className={styles.providerLogo}
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    width="30"
+                    height="30"
+                    x="1"
+                    y="1"
+                    rx="6"
+                    fill="none"
+                    stroke="var(--text)"
+                    strokeWidth="2"
+                    strokeDasharray="4 3"
+                  />
+                  <text
+                    x="16"
+                    y="22"
+                    textAnchor="middle"
+                    fontSize="18"
+                    fontWeight="600"
+                    fill="var(--text)"
+                  >
+                    ?
+                  </text>
+                </svg>
+              </button>
+            </div>
           )}
 
           {show.overview && <p className={styles.overview}>{show.overview}</p>}

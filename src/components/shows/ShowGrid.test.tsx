@@ -30,7 +30,7 @@ const mockShows: Show[] = [
     tmdb_id: 1418,
     name: "The Big Bang Theory",
     poster_path: "/tbbt.jpg",
-    overview: "Nerds",
+    overview: "Physicists",
     first_air_date: "2007-09-24",
     status: "watchlist",
     streaming_service: "Max",
