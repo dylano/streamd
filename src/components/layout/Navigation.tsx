@@ -14,8 +14,12 @@ export function Navigation() {
   const isShowPage = pathname.startsWith("/show/");
 
   async function handleSync() {
-    await sync();
-    navigate("/");
+    try {
+      await sync();
+      navigate("/");
+    } catch {
+      // Sync errors are non-fatal — the button re-enables via SyncContext
+    }
   }
 
   return (

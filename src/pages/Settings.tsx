@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
+import { useUser } from "../context/UserContext";
 import { api } from "../api/client";
 import styles from "./Settings.module.css";
 
 export function Settings() {
   const { settings, updateSetting } = useSettings();
+  const { user, logout } = useUser();
   const [resetting, setResetting] = useState(false);
   const navigate = useNavigate();
 
@@ -29,6 +31,7 @@ export function Settings() {
     <div className={styles.page}>
       <h1>Settings</h1>
 
+      <h2 className={styles.sectionTitle}>Preferences</h2>
       <div className={styles.section}>
         <div className={styles.setting}>
           <div className={styles.settingInfo}>
@@ -57,6 +60,19 @@ export function Settings() {
             aria-pressed={settings.theme === "dark"}
           >
             <span className={styles.toggleKnob} />
+          </button>
+        </div>
+      </div>
+
+      <h2 className={styles.sectionTitle}>Account</h2>
+      <div className={styles.section}>
+        <div className={styles.setting}>
+          <div className={styles.settingInfo}>
+            <span className={styles.settingLabel}>Logged in as {user?.name}</span>
+            <span className={styles.settingDesc}>Switch to a different user</span>
+          </div>
+          <button className={styles.secondaryButton} onClick={logout} type="button">
+            Log out
           </button>
         </div>
       </div>

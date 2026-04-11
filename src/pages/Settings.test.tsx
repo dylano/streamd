@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vite-plus/test";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+import { UserProvider } from "../context/UserContext";
 import { SettingsProvider } from "../context/SettingsContext";
 import { Settings } from "./Settings";
 
@@ -12,9 +13,11 @@ afterEach(() => {
 function renderSettings() {
   return render(
     <MemoryRouter>
-      <SettingsProvider>
-        <Settings />
-      </SettingsProvider>
+      <UserProvider>
+        <SettingsProvider>
+          <Settings />
+        </SettingsProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }

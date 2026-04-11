@@ -4,7 +4,7 @@ Personal TV show tracker for managing shows across streaming services.
 
 ## Tech Stack
 
-- React 19 + TypeScript + Vite+ (unified toolchain: Vite + Vitest + Oxlint)
+- React 19 & TypeScript & Vite+ (unified toolchain: Vite & Vitest & Oxlint)
 - Cloudflare Pages (frontend + API)
 - Cloudflare D1 (SQLite database)
 - TMDB API (show metadata)
@@ -30,16 +30,16 @@ Dev server runs at http://localhost:5173 (API proxied to port 8788)
 
 ## Scripts
 
-| Command            | Description                    |
-| ------------------ | ------------------------------ |
-| `npm run dev`      | Frontend + API with HMR        |
-| `npm run dev:mock` | Frontend with MSW mock API     |
-| `npm run build`    | Build for production           |
-| `npm start`        | Serve production build locally |
-| `npm run db:reset` | Wipe local DB and restart      |
-| `npm run lint`     | Run Oxlint (via Vite+)         |
-| `npm test`         | Run tests in watch mode        |
-| `npm run test:run` | Run tests once                 |
+| Command            | Description                               |
+| ------------------ | ----------------------------------------- |
+| `npm run dev`      | Vite + Wrangler concurrently (full stack) |
+| `npm run dev:mock` | Vite only with MSW mock API               |
+| `npm run build`    | Build for production                      |
+| `npm start`        | Serve production build locally            |
+| `npm run db:reset` | Wipe local DB and restart                 |
+| `npm run lint`     | Lint with Oxlint (via Vite+)              |
+| `npm test`         | Run tests in watch mode                   |
+| `npm run test:run` | Run tests once                            |
 
 ## Environment Variables
 

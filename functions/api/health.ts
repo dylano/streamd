@@ -5,6 +5,13 @@ interface Env {
 async function ensureSchema(db: D1Database) {
   await db.batch([
     db.prepare(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        created_at TEXT DEFAULT (datetime('now'))
+      )
+    `),
+    db.prepare(`
       CREATE TABLE IF NOT EXISTS shows (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tmdb_id INTEGER NOT NULL UNIQUE,
@@ -12,12 +19,9 @@ async function ensureSchema(db: D1Database) {
         poster_path TEXT,
         overview TEXT,
         first_air_date TEXT,
-        status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
         streaming_service TEXT,
         total_seasons INTEGER DEFAULT 0,
         total_episodes INTEGER DEFAULT 0,
-        current_season INTEGER,
-        current_episode INTEGER,
         added_at TEXT DEFAULT (datetime('now')),
         updated_at TEXT DEFAULT (datetime('now'))
       )
@@ -32,10 +36,33 @@ async function ensureSchema(db: D1Database) {
         name TEXT,
         air_date TEXT,
         runtime INTEGER,
-        watched INTEGER DEFAULT 0,
-        watched_at TEXT,
         FOREIGN KEY (show_id) REFERENCES shows(id) ON DELETE CASCADE,
         UNIQUE(show_id, season_number, episode_number)
+      )
+    `),
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS user_shows (
+        user_id INTEGER NOT NULL,
+        show_id INTEGER NOT NULL,
+        status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
+        current_season INTEGER,
+        current_episode INTEGER,
+        added_at TEXT DEFAULT (datetime('now')),
+        updated_at TEXT DEFAULT (datetime('now')),
+        PRIMARY KEY (user_id, show_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (show_id) REFERENCES shows(id) ON DELETE CASCADE
+      )
+    `),
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS user_episodes (
+        user_id INTEGER NOT NULL,
+        episode_id INTEGER NOT NULL,
+        watched INTEGER DEFAULT 0,
+        watched_at TEXT,
+        PRIMARY KEY (user_id, episode_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (episode_id) REFERENCES episodes(id) ON DELETE CASCADE
       )
     `),
     db.prepare(`
@@ -45,9 +72,10 @@ async function ensureSchema(db: D1Database) {
         expires_at TEXT NOT NULL
       )
     `),
-    db.prepare(`CREATE INDEX IF NOT EXISTS idx_shows_status ON shows(status)`),
     db.prepare(`CREATE INDEX IF NOT EXISTS idx_episodes_show_id ON episodes(show_id)`),
     db.prepare(`CREATE INDEX IF NOT EXISTS idx_episodes_air_date ON episodes(air_date)`),
+    db.prepare(`CREATE INDEX IF NOT EXISTS idx_user_shows_user ON user_shows(user_id)`),
+    db.prepare(`CREATE INDEX IF NOT EXISTS idx_user_episodes_user ON user_episodes(user_id)`),
   ]);
 }
 

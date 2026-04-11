@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
+import { UserProvider } from "../context/UserContext";
 import { ShowsProvider } from "../context/ShowsContext";
 import { SettingsProvider } from "../context/SettingsContext";
 import { History } from "./History";
@@ -10,11 +11,13 @@ import { History } from "./History";
 function renderHistory() {
   return render(
     <MemoryRouter>
-      <SettingsProvider>
-        <ShowsProvider>
-          <History />
-        </ShowsProvider>
-      </SettingsProvider>
+      <UserProvider>
+        <SettingsProvider>
+          <ShowsProvider>
+            <History />
+          </ShowsProvider>
+        </SettingsProvider>
+      </UserProvider>
     </MemoryRouter>,
   );
 }

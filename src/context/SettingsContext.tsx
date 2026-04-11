@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { useUser } from "./UserContext";
 
 interface Settings {
   showTrending: boolean;
@@ -15,13 +16,14 @@ const defaultSettings: Settings = {
   theme: "system",
 };
 
-const STORAGE_KEY = "streamd-settings";
-
 const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
+  const { user } = useUser();
+  const storageKey = `streamd-settings:${user!.id}`;
+
   const [settings, setSettings] = useState<Settings>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(storageKey);
     if (stored) {
       try {
         return { ...defaultSettings, ...JSON.parse(stored) };
@@ -33,8 +35,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  }, [settings]);
+    localStorage.setItem(storageKey, JSON.stringify(settings));
+  }, [settings, storageKey]);
 
   useEffect(() => {
     const root = document.documentElement;

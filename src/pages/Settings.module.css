@@ -93,6 +93,22 @@
   letter-spacing: 0.5px;
 }
 
+.secondaryButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.secondaryButton:hover {
+  background: var(--border);
+}
+
 .dangerButton {
   padding: 8px 16px;
   font-size: 14px;

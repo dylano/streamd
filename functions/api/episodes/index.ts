@@ -15,8 +15,9 @@ interface Episode {
   watched_at: string | null;
 }
 
-// GET /api/episodes?show_id=123 - List episodes for a show
+// GET /api/episodes?show_id=123 - List episodes for a show with user's watch state
 export const onRequestGet: PagesFunction<Env> = async (context) => {
+  const userId = (context.data as { userId: number }).userId;
   const url = new URL(context.request.url);
   const showId = url.searchParams.get("show_id");
 
@@ -25,9 +26,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   const result = await context.env.DB.prepare(
-    "SELECT * FROM episodes WHERE show_id = ? ORDER BY season_number, episode_number",
+    `SELECT e.id, e.show_id, e.tmdb_id, e.season_number, e.episode_number,
+            e.name, e.air_date, e.runtime,
+            COALESCE(ue.watched, 0) as watched, ue.watched_at
+     FROM episodes e
+     LEFT JOIN user_episodes ue ON e.id = ue.episode_id AND ue.user_id = ?
+     WHERE e.show_id = ?
+     ORDER BY e.season_number, e.episode_number`,
   )
-    .bind(showId)
+    .bind(userId, showId)
     .all<Episode>();
 
   return Response.json(result.results);
@@ -73,10 +80,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   await context.env.DB.batch(statements);
 
+  const userId = (context.data as { userId: number }).userId;
   const result = await context.env.DB.prepare(
-    "SELECT * FROM episodes WHERE show_id = ? ORDER BY season_number, episode_number",
+    `SELECT e.id, e.show_id, e.tmdb_id, e.season_number, e.episode_number,
+            e.name, e.air_date, e.runtime,
+            COALESCE(ue.watched, 0) as watched, ue.watched_at
+     FROM episodes e
+     LEFT JOIN user_episodes ue ON e.id = ue.episode_id AND ue.user_id = ?
+     WHERE e.show_id = ?
+     ORDER BY e.season_number, e.episode_number`,
   )
-    .bind(body.show_id)
+    .bind(userId, body.show_id)
     .all<Episode>();
 
   return Response.json(result.results, { status: 201 });

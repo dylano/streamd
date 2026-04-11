@@ -1,5 +1,11 @@
 const API_BASE = "/api";
 
+let currentUserId: number | null = null;
+
+export function setApiUserId(id: number | null) {
+  currentUserId = id;
+}
+
 export class ApiError extends Error {
   status: number;
 
@@ -15,6 +21,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(currentUserId ? { "X-User-Id": String(currentUserId) } : {}),
       ...options?.headers,
     },
   });
@@ -46,4 +53,18 @@ export const api = {
     request<T>(path, {
       method: "DELETE",
     }),
+};
+
+// User API methods — these don't require X-User-Id (pre-auth)
+export const userApi = {
+  lookup: (name: string) =>
+    request<{ id: number; name: string }>(`/users?name=${encodeURIComponent(name)}`),
+
+  create: (name: string) =>
+    request<{ id: number; name: string }>("/users", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    }),
+
+  validate: (id: number) => request<{ id: number; name: string }>(`/users/${id}`),
 };
