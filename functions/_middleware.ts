@@ -17,11 +17,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Check if this path requires user identification
+  // Only enforce user identification on protected API routes
   const url = new URL(context.request.url);
-  const isPublic = publicPrefixes.some((prefix) => url.pathname.startsWith(prefix));
+  const isApi = url.pathname.startsWith("/api/");
+  const isPublicApi = publicPrefixes.some((prefix) => url.pathname.startsWith(prefix));
 
-  if (!isPublic) {
+  if (isApi && !isPublicApi) {
     const userIdHeader = context.request.headers.get("X-User-Id");
     if (!userIdHeader) {
       return Response.json({ error: "User identification required" }, { status: 401 });
