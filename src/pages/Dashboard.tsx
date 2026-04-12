@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
+import { parseLocalDate, formatAirDate } from "../utils/dates";
 import { parseStreamingProviders, useTMDBTrending } from "../hooks/useTMDB";
 import { useSettings } from "../context/SettingsContext";
 import type { UnwatchedEpisode } from "../types";
@@ -118,8 +119,12 @@ export function Dashboard() {
     })
     // Sort by air date of next up episode (newest first)
     .sort((a, b) => {
-      const dateA = a.nextUpEpisode.air_date ? new Date(a.nextUpEpisode.air_date).getTime() : 0;
-      const dateB = b.nextUpEpisode.air_date ? new Date(b.nextUpEpisode.air_date).getTime() : 0;
+      const dateA = a.nextUpEpisode.air_date
+        ? parseLocalDate(a.nextUpEpisode.air_date).getTime()
+        : 0;
+      const dateB = b.nextUpEpisode.air_date
+        ? parseLocalDate(b.nextUpEpisode.air_date).getTime()
+        : 0;
       return dateB - dateA;
     });
 
@@ -192,7 +197,7 @@ export function Dashboard() {
                             {ep.season_number}×{String(ep.episode_number).padStart(2, "0")}
                           </span>
                           <span className={styles.epMetaDate}>
-                            {ep.air_date && new Date(ep.air_date).toLocaleDateString()}
+                            {ep.air_date && formatAirDate(ep.air_date)}
                           </span>
                         </span>
                       </div>
@@ -255,7 +260,7 @@ export function Dashboard() {
                                 {ep.season_number}×{String(ep.episode_number).padStart(2, "0")}
                               </span>
                               <span className={styles.epDate}>
-                                {ep.air_date ? new Date(ep.air_date).toLocaleDateString() : ""}
+                                {ep.air_date ? formatAirDate(ep.air_date) : ""}
                               </span>
                             </div>
                           </div>

@@ -1,4 +1,5 @@
 import type { Episode } from "../../types";
+import { parseLocalDate, formatAirDate } from "../../utils/dates";
 import styles from "./EpisodeRow.module.css";
 
 interface EpisodeRowProps {
@@ -7,8 +8,8 @@ interface EpisodeRowProps {
 }
 
 export function EpisodeRow({ episode, onToggleWatched }: EpisodeRowProps) {
-  const isAired = episode.air_date ? new Date(episode.air_date) <= new Date() : false;
-  const formattedDate = episode.air_date ? new Date(episode.air_date).toLocaleDateString() : "TBA";
+  const isAired = episode.air_date ? parseLocalDate(episode.air_date) <= new Date() : false;
+  const formattedDate = formatAirDate(episode.air_date);
 
   return (
     <div className={`${styles.row} ${episode.watched ? styles.watched : ""}`}>
