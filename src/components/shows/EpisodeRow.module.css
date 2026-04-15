@@ -36,9 +36,15 @@
   border-color: var(--accent);
 }
 
-.checkbox:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.checkboxPlaceholder {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 .row.watched .checkbox {

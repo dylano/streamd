@@ -62,7 +62,6 @@
 .nextUpList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .nextUpItem {
@@ -70,11 +69,31 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
+  margin-bottom: 8px;
   background: var(--code-bg);
   border-radius: 8px;
+  max-height: 200px;
+  overflow: hidden;
   transition:
     opacity 0.3s,
-    transform 0.3s;
+    transform 0.3s,
+    max-height 0.3s ease,
+    padding 0.3s ease,
+    margin-bottom 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+}
+
+.nextUpItem:last-child {
+  margin-bottom: 0;
 }
 
 .showLink {
@@ -177,6 +196,18 @@
 .nextUpItem.marking {
   opacity: 0;
   transform: translateX(20px);
+}
+
+.nextUpItem.entering {
+  animation: slideIn 0.3s ease both;
+}
+
+.nextUpItem.collapsing {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  opacity: 0;
 }
 
 /* Additional Episodes section */
