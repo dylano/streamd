@@ -13,15 +13,18 @@ export function EpisodeRow({ episode, onToggleWatched }: EpisodeRowProps) {
 
   return (
     <div className={`${styles.row} ${episode.watched ? styles.watched : ""}`}>
-      <button
-        className={styles.checkbox}
-        onClick={() => onToggleWatched(episode.id, !episode.watched)}
-        disabled={!isAired}
-        aria-label={episode.watched ? "Mark as unwatched" : "Mark as watched"}
-        type="button"
-      >
-        {episode.watched ? "✓" : ""}
-      </button>
+      {isAired ? (
+        <button
+          className={styles.checkbox}
+          onClick={() => onToggleWatched(episode.id, !episode.watched)}
+          aria-label={episode.watched ? "Mark as unwatched" : "Mark as watched"}
+          type="button"
+        >
+          {episode.watched ? "✓" : ""}
+        </button>
+      ) : (
+        <div className={styles.checkboxPlaceholder}>🔒</div>
+      )}
       <div className={styles.details}>
         <span className={styles.name}>{episode.name || "TBA"}</span>
         <div className={styles.meta}>

@@ -77,7 +77,7 @@ describe("EpisodeRow", () => {
     expect(button).toHaveTextContent("✓");
   });
 
-  it("disables checkbox for unaired episodes", () => {
+  it("shows lock instead of checkbox for unaired episodes", () => {
     const onToggle = vi.fn();
     const futureEpisode: Episode = {
       ...mockEpisode,
@@ -85,8 +85,8 @@ describe("EpisodeRow", () => {
     };
     render(<EpisodeRow episode={futureEpisode} onToggleWatched={onToggle} />);
 
-    const button = screen.getByRole("button");
-    expect(button).toBeDisabled();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.getByText("🔒")).toBeInTheDocument();
   });
 
   it("enables checkbox for aired episodes", () => {

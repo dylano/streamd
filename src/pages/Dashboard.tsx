@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
@@ -23,6 +23,9 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [markingIds, setMarkingIds] = useState<Set<number>>(new Set());
+  const [collapsingIds, setCollapsingIds] = useState<Set<number>>(new Set());
+  const knownEpIds = useRef<Set<number>>(new Set());
+  const [newIds, setNewIds] = useState<Set<number>>(new Set());
   const { results: trending, fetchTrending } = useTMDBTrending();
   const { settings } = useSettings();
 
@@ -46,13 +49,30 @@ export function Dashboard() {
     void fetchTrending();
   }, [fetchEpisodes, fetchTrending]);
 
+  useEffect(() => {
+    const incoming = new Set(episodes.map((ep) => ep.id));
+    const fresh = new Set<number>();
+    for (const id of incoming) {
+      if (!knownEpIds.current.has(id)) fresh.add(id);
+    }
+    knownEpIds.current = incoming;
+    if (fresh.size > 0) setNewIds(fresh);
+  }, [episodes]);
+
   async function handleMarkWatched(episodeId: number) {
     if (markingIds.has(episodeId)) return;
     setMarkingIds((prev) => new Set(prev).add(episodeId));
     await api.put(`/episodes/${episodeId}`, { watched: true });
     await new Promise((resolve) => setTimeout(resolve, 300));
+    setCollapsingIds((prev) => new Set(prev).add(episodeId));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     setEpisodes((prev) => prev.filter((ep) => ep.id !== episodeId));
     setMarkingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(episodeId);
+      return next;
+    });
+    setCollapsingIds((prev) => {
       const next = new Set(prev);
       next.delete(episodeId);
       return next;
@@ -176,10 +196,20 @@ export function Dashboard() {
               {groups.map((group) => {
                 const ep = group.nextUpEpisode;
                 const isMarking = markingIds.has(ep.id);
+                const isCollapsing = collapsingIds.has(ep.id);
+                const isNew = newIds.has(ep.id);
                 return (
                   <div
                     key={ep.id}
-                    className={`${styles.nextUpItem} ${isMarking ? styles.marking : ""}`}
+                    className={`${styles.nextUpItem} ${isMarking ? styles.marking : ""} ${isCollapsing ? styles.collapsing : ""} ${isNew ? styles.entering : ""}`}
+                    onAnimationEnd={() => {
+                      if (isNew)
+                        setNewIds((prev) => {
+                          const next = new Set(prev);
+                          next.delete(ep.id);
+                          return next;
+                        });
+                    }}
                   >
                     <Link to={`/show/${group.show_id}`} className={styles.showLink}>
                       {group.show_poster_path && (
