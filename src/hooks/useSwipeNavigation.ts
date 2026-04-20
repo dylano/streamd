@@ -7,6 +7,13 @@ const SWIPE_ROUTES = ["/", "/watchlist"];
 const SWIPE_THRESHOLD = 60;
 const SWIPE_MAX_Y = 80;
 
+function getRouteIndex(pathname: string): number {
+  const exact = SWIPE_ROUTES.indexOf(pathname);
+  if (exact !== -1) return exact;
+  if (pathname.startsWith("/show/")) return 1;
+  return -1;
+}
+
 export function useSwipeNavigation(ref: React.RefObject<HTMLElement | null>): SlideDirection {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -21,7 +28,7 @@ export function useSwipeNavigation(ref: React.RefObject<HTMLElement | null>): Sl
 
   const handleTouchEnd = useCallback(
     (e: TouchEvent) => {
-      const idx = SWIPE_ROUTES.indexOf(pathname);
+      const idx = getRouteIndex(pathname);
       if (idx === -1) return;
 
       const dx = e.changedTouches[0].clientX - startX.current;
