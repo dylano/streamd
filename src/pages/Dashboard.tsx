@@ -5,6 +5,7 @@ import { getPosterUrl, getLogoUrl } from "../utils/images";
 import { parseLocalDate, formatAirDate } from "../utils/dates";
 import { parseStreamingProviders, useTMDBTrending } from "../hooks/useTMDB";
 import { useSettings } from "../context/SettingsContext";
+import { useSync } from "../context/SyncContext";
 import type { UnwatchedEpisode } from "../types";
 import styles from "./Dashboard.module.css";
 
@@ -26,8 +27,9 @@ export function Dashboard() {
   const [collapsingIds, setCollapsingIds] = useState<Set<number>>(new Set());
   const knownEpIds = useRef<Set<number>>(new Set());
   const [newIds, setNewIds] = useState<Set<number>>(new Set());
-  const { results: trending, fetchTrending } = useTMDBTrending();
+  const { results: trending, fetchTrending, refreshTrending } = useTMDBTrending();
   const { settings } = useSettings();
+  const { syncing } = useSync();
 
   const fetchEpisodes = useCallback(async () => {
     try {
@@ -46,8 +48,16 @@ export function Dashboard() {
 
   useEffect(() => {
     void fetchEpisodes();
-    void fetchTrending();
-  }, [fetchEpisodes, fetchTrending]);
+    if (settings.showTrending) void fetchTrending();
+  }, [fetchEpisodes, fetchTrending, settings.showTrending]);
+
+  const prevSyncing = useRef(false);
+  useEffect(() => {
+    if (prevSyncing.current && !syncing && settings.showTrending) {
+      void refreshTrending();
+    }
+    prevSyncing.current = syncing;
+  }, [syncing, refreshTrending, settings.showTrending]);
 
   useEffect(() => {
     const incoming = new Set(episodes.map((ep) => ep.id));

@@ -1,6 +1,14 @@
-import { describe, it, expect } from "vite-plus/test";
+import { describe, it, expect, vi } from "vite-plus/test";
 import { renderHook, waitFor, act } from "@testing-library/react";
-import { useTMDBSearch, useTMDBShow, useTMDBSeason } from "./useTMDB";
+import { http, HttpResponse } from "msw";
+import { server } from "../test/mocks/server";
+import {
+  useTMDBSearch,
+  useTMDBShow,
+  useTMDBSeason,
+  useTMDBTrending,
+  resetTrendingCache,
+} from "./useTMDB";
 
 describe("useTMDBSearch", () => {
   it("initializes with null results", () => {
@@ -111,5 +119,116 @@ describe("useTMDBSeason", () => {
     expect(season?.season_number).toBe(1);
     expect(season?.episodes).toHaveLength(10);
     expect(season?.episodes[0].name).toBe("Episode 1");
+  });
+});
+
+describe("useTMDBTrending", () => {
+  beforeEach(() => {
+    resetTrendingCache();
+  });
+
+  it("fetches trending on first call", async () => {
+    const { result } = renderHook(() => useTMDBTrending());
+    expect(result.current.results).toBeNull();
+
+    await act(async () => {
+      await result.current.fetchTrending();
+    });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.results).not.toBeNull();
+    expect(result.current.results?.results[0].name).toBe("Trending Show 1");
+  });
+
+  it("skips fetch when cache is populated", async () => {
+    let fetchCount = 0;
+    server.use(
+      http.get("/api/tmdb/trending", () => {
+        fetchCount++;
+        return HttpResponse.json({
+          page: 1,
+          results: [
+            {
+              id: 1,
+              name: "Cached",
+              poster_path: null,
+              overview: "",
+              first_air_date: "",
+              vote_average: 0,
+              popularity: 0,
+            },
+          ],
+          total_pages: 1,
+          total_results: 1,
+        });
+      }),
+    );
+
+    const { result } = renderHook(() => useTMDBTrending());
+
+    await act(async () => {
+      await result.current.fetchTrending();
+    });
+    expect(fetchCount).toBe(1);
+
+    await act(async () => {
+      await result.current.fetchTrending();
+    });
+    expect(fetchCount).toBe(1);
+  });
+
+  it("refreshTrending bypasses cache", async () => {
+    let fetchCount = 0;
+    server.use(
+      http.get("/api/tmdb/trending", () => {
+        fetchCount++;
+        return HttpResponse.json({
+          page: 1,
+          results: [
+            {
+              id: 1,
+              name: `Call ${fetchCount}`,
+              poster_path: null,
+              overview: "",
+              first_air_date: "",
+              vote_average: 0,
+              popularity: 0,
+            },
+          ],
+          total_pages: 1,
+          total_results: 1,
+        });
+      }),
+    );
+
+    const { result } = renderHook(() => useTMDBTrending());
+
+    await act(async () => {
+      await result.current.fetchTrending();
+    });
+    expect(result.current.results?.results[0].name).toBe("Call 1");
+
+    await act(async () => {
+      await result.current.refreshTrending();
+    });
+    expect(fetchCount).toBe(2);
+    expect(result.current.results?.results[0].name).toBe("Call 2");
+  });
+
+  it("persists cache across remounts", async () => {
+    const { result, unmount } = renderHook(() => useTMDBTrending());
+
+    await act(async () => {
+      await result.current.fetchTrending();
+    });
+    expect(result.current.results).not.toBeNull();
+    unmount();
+
+    const { result: result2 } = renderHook(() => useTMDBTrending());
+    expect(result2.current.results).not.toBeNull();
+    expect(result2.current.results?.results[0].name).toBe("Trending Show 1");
   });
 });
