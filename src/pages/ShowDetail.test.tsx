@@ -106,7 +106,6 @@ describe("ShowDetail", () => {
 
   it("navigates to watchlist after delete", async () => {
     const user = userEvent.setup();
-    vi.spyOn(window, "confirm").mockReturnValue(true);
 
     server.use(
       http.delete("/api/shows/1", () => {
@@ -121,6 +120,14 @@ describe("ShowDetail", () => {
     });
 
     await user.click(screen.getByTitle("Remove show"));
+
+    // Confirm dialog should appear
+    await waitFor(() => {
+      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    });
+    expect(screen.getByText(/Remove "Scrubs" from your watchlist/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Remove" }));
 
     await waitFor(() => {
       expect(screen.getByText("Watchlist Page")).toBeInTheDocument();

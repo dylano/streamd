@@ -4,6 +4,7 @@ import { useShows } from "../context/ShowsContext";
 import { useEpisodes } from "../hooks/useEpisodes";
 import { useTMDBShow, useTMDBSeason, parseStreamingProviders } from "../hooks/useTMDB";
 import { EpisodeRow, ProviderPicker } from "../components/shows";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
 import styles from "./ShowDetail.module.css";
 
@@ -21,6 +22,7 @@ export function ShowDetail() {
   const { show: tmdbShow, fetchShow: fetchTMDBShow } = useTMDBShow();
   const { fetchSeason } = useTMDBSeason();
   const [pickingProvider, setPickingProvider] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -82,10 +84,8 @@ export function ShowDetail() {
 
   async function handleDelete() {
     if (!show) return;
-    if (confirm("Are you sure you want to remove this show?")) {
-      await deleteShow(show.id);
-      navigate("/watchlist");
-    }
+    await deleteShow(show.id);
+    navigate("/watchlist");
   }
 
   async function handleToggleWatched(episodeId: number, watched: boolean) {
@@ -176,7 +176,7 @@ export function ShowDetail() {
               <span className={styles.bookmark}>Caught up</span>
             )}
             <button
-              onClick={handleDelete}
+              onClick={() => setConfirmingDelete(true)}
               className={styles.deleteButton}
               title="Remove show"
               type="button"
@@ -245,6 +245,14 @@ export function ShowDetail() {
             )}
           </div>
         </div>
+      )}
+
+      {confirmingDelete && (
+        <ConfirmDialog
+          message={`Remove "${show.name}" from your watchlist?`}
+          onConfirm={handleDelete}
+          onCancel={() => setConfirmingDelete(false)}
+        />
       )}
     </div>
   );
