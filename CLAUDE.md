@@ -26,6 +26,9 @@
 - Custom hooks go in `src/hooks/` — never inline hook logic in context files.
 - Use the `Intl` module for date/time formatting and locale-aware utilities. No locale hacks (e.g. `sv-SE` for date formatting) or third-party date libraries.
 - Imports from test utilities use `vite-plus/test`, not `vitest` directly.
+- Shared UI components (e.g. `ConfirmDialog`) go in `src/components/ui/`.
+- **Client-side caching:** Module-level variables cache API responses (episodes, trending) across component remounts to avoid loading flashes on tab/swipe navigation. Caches are updated inline on user actions (e.g. marking watched) and refreshed on sync.
+- **Swipe navigation:** `useSwipeNavigation` hook enables horizontal swipe between Dashboard and My Shows tabs (including from ShowDetail pages). Swipes trigger a slide-in CSS animation on the `<main>` element.
 
 ## Testing
 
