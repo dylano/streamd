@@ -32,6 +32,7 @@ export default defineConfig({
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
   server: {
+    host: true,
     proxy: {
       "/api": {
         target: "http://localhost:8788",

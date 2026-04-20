@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100svh;
+  overflow-x: hidden;
 }
 
 .main {
@@ -10,4 +11,34 @@
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+}
+
+.slideLeft {
+  animation: slideFromRight 0.25s ease-out;
+}
+
+.slideRight {
+  animation: slideFromLeft 0.25s ease-out;
+}
+
+@keyframes slideFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

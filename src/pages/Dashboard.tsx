@@ -5,6 +5,7 @@ import { getPosterUrl, getLogoUrl } from "../utils/images";
 import { parseLocalDate, formatAirDate } from "../utils/dates";
 import { parseStreamingProviders, useTMDBTrending } from "../hooks/useTMDB";
 import { useSettings } from "../context/SettingsContext";
+import { useSync } from "../context/SyncContext";
 import type { UnwatchedEpisode } from "../types";
 import styles from "./Dashboard.module.css";
 
@@ -18,24 +19,28 @@ interface ShowGroup {
   episodes: UnwatchedEpisode[];
 }
 
+let episodesCache: UnwatchedEpisode[] | null = null;
+
 export function Dashboard() {
-  const [episodes, setEpisodes] = useState<UnwatchedEpisode[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [episodes, setEpisodes] = useState<UnwatchedEpisode[]>(episodesCache ?? []);
+  const [loading, setLoading] = useState(episodesCache === null);
   const [error, setError] = useState<string | null>(null);
   const [markingIds, setMarkingIds] = useState<Set<number>>(new Set());
   const [collapsingIds, setCollapsingIds] = useState<Set<number>>(new Set());
   const knownEpIds = useRef<Set<number>>(new Set());
   const [newIds, setNewIds] = useState<Set<number>>(new Set());
-  const { results: trending, fetchTrending } = useTMDBTrending();
+  const { results: trending, fetchTrending, refreshTrending } = useTMDBTrending();
   const { settings } = useSettings();
+  const { syncing } = useSync();
 
   const fetchEpisodes = useCallback(async () => {
     try {
-      setLoading(true);
+      if (!episodesCache) setLoading(true);
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const data = await api.get<UnwatchedEpisode[]>(
         `/episodes/unwatched?tz=${encodeURIComponent(tz)}`,
       );
+      episodesCache = data;
       setEpisodes(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load episodes");
@@ -46,8 +51,16 @@ export function Dashboard() {
 
   useEffect(() => {
     void fetchEpisodes();
-    void fetchTrending();
-  }, [fetchEpisodes, fetchTrending]);
+    if (settings.showTrending) void fetchTrending();
+  }, [fetchEpisodes, fetchTrending, settings.showTrending]);
+
+  const prevSyncing = useRef(false);
+  useEffect(() => {
+    if (prevSyncing.current && !syncing && settings.showTrending) {
+      void refreshTrending();
+    }
+    prevSyncing.current = syncing;
+  }, [syncing, refreshTrending, settings.showTrending]);
 
   useEffect(() => {
     const incoming = new Set(episodes.map((ep) => ep.id));
@@ -66,7 +79,11 @@ export function Dashboard() {
     await new Promise((resolve) => setTimeout(resolve, 300));
     setCollapsingIds((prev) => new Set(prev).add(episodeId));
     await new Promise((resolve) => setTimeout(resolve, 300));
-    setEpisodes((prev) => prev.filter((ep) => ep.id !== episodeId));
+    setEpisodes((prev) => {
+      const next = prev.filter((ep) => ep.id !== episodeId);
+      episodesCache = next;
+      return next;
+    });
     setMarkingIds((prev) => {
       const next = new Set(prev);
       next.delete(episodeId);

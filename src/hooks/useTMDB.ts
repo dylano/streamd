@@ -127,14 +127,23 @@ export function parseStreamingProviders(json: string | null): StreamingProvider[
   }
 }
 
+let trendingCache: TMDBSearchResponse | null = null;
+
+/** @internal test-only */
+export function resetTrendingCache() {
+  trendingCache = null;
+}
+
 export function useTMDBTrending() {
-  const [results, setResults] = useState<TMDBSearchResponse | null>(null);
+  const [results, setResults] = useState<TMDBSearchResponse | null>(trendingCache);
   const [loading, setLoading] = useState(false);
 
   const fetchTrending = useCallback(async () => {
+    if (trendingCache) return;
     try {
       setLoading(true);
       const data = await api.get<TMDBSearchResponse>("/tmdb/trending");
+      trendingCache = data;
       setResults(data);
     } catch {
       setResults(null);
@@ -143,5 +152,19 @@ export function useTMDBTrending() {
     }
   }, []);
 
-  return { results, loading, fetchTrending };
+  const refreshTrending = useCallback(async () => {
+    trendingCache = null;
+    try {
+      setLoading(true);
+      const data = await api.get<TMDBSearchResponse>("/tmdb/trending");
+      trendingCache = data;
+      setResults(data);
+    } catch {
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { results, loading, fetchTrending, refreshTrending };
 }
