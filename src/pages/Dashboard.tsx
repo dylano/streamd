@@ -19,9 +19,11 @@ interface ShowGroup {
   episodes: UnwatchedEpisode[];
 }
 
+let episodesCache: UnwatchedEpisode[] | null = null;
+
 export function Dashboard() {
-  const [episodes, setEpisodes] = useState<UnwatchedEpisode[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [episodes, setEpisodes] = useState<UnwatchedEpisode[]>(episodesCache ?? []);
+  const [loading, setLoading] = useState(episodesCache === null);
   const [error, setError] = useState<string | null>(null);
   const [markingIds, setMarkingIds] = useState<Set<number>>(new Set());
   const [collapsingIds, setCollapsingIds] = useState<Set<number>>(new Set());
@@ -33,11 +35,12 @@ export function Dashboard() {
 
   const fetchEpisodes = useCallback(async () => {
     try {
-      setLoading(true);
+      if (!episodesCache) setLoading(true);
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const data = await api.get<UnwatchedEpisode[]>(
         `/episodes/unwatched?tz=${encodeURIComponent(tz)}`,
       );
+      episodesCache = data;
       setEpisodes(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load episodes");
@@ -76,7 +79,11 @@ export function Dashboard() {
     await new Promise((resolve) => setTimeout(resolve, 300));
     setCollapsingIds((prev) => new Set(prev).add(episodeId));
     await new Promise((resolve) => setTimeout(resolve, 300));
-    setEpisodes((prev) => prev.filter((ep) => ep.id !== episodeId));
+    setEpisodes((prev) => {
+      const next = prev.filter((ep) => ep.id !== episodeId);
+      episodesCache = next;
+      return next;
+    });
     setMarkingIds((prev) => {
       const next = new Set(prev);
       next.delete(episodeId);
