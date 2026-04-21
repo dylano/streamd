@@ -1,3 +1,9 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .page h1 {
   font-size: 24px;
   margin: 0 0 24px;
@@ -8,4 +14,21 @@
   color: var(--text);
   text-align: center;
   padding: 48px 24px;
+}
+
+.socialLink {
+  margin-top: auto;
+  padding: 32px 0 24px;
+  align-self: center;
+  background: none;
+  border: none;
+  color: var(--text-h);
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.socialLink:hover {
+  opacity: 1;
 }
