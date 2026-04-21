@@ -67,4 +67,8 @@ export const userApi = {
     }),
 
   validate: (id: number) => request<{ id: number; name: string }>(`/users/${id}`),
+
+  listAll: () => request<{ id: number; name: string }[]>("/users/all"),
+
+  getUserShows: (userId: number) => request<import("../types").Show[]>(`/users/${userId}/shows`),
 };

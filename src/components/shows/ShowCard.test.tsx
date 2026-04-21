@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vite-plus/test";
+import { describe, it, expect, vi } from "vite-plus/test";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { ShowCard } from "./ShowCard";
 import type { Show } from "../../types";
@@ -64,5 +65,29 @@ describe("ShowCard", () => {
     renderWithRouter(<ShowCard show={noPosterShow} />);
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
     expect(screen.getByText("S")).toBeInTheDocument(); // First letter of "Scrubs"
+  });
+
+  it("renders add button when onAdd is provided", () => {
+    renderWithRouter(<ShowCard show={mockShow} onAdd={() => {}} />);
+    expect(screen.getByTitle("Add to my shows")).toBeInTheDocument();
+  });
+
+  it("does not render add button by default", () => {
+    renderWithRouter(<ShowCard show={mockShow} />);
+    expect(screen.queryByTitle("Add to my shows")).not.toBeInTheDocument();
+  });
+
+  it("renders as div instead of link when onAdd is provided", () => {
+    renderWithRouter(<ShowCard show={mockShow} onAdd={() => {}} />);
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("calls onAdd with the show when add button is clicked", async () => {
+    const handleAdd = vi.fn();
+    const user = userEvent.setup();
+    renderWithRouter(<ShowCard show={mockShow} onAdd={handleAdd} />);
+
+    await user.click(screen.getByTitle("Add to my shows"));
+    expect(handleAdd).toHaveBeenCalledWith(mockShow);
   });
 });

@@ -90,6 +90,36 @@ For production, set `TMDB_API_KEY` in Cloudflare Pages dashboard under Settings 
 
 Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
+## Release Notes
+
+### v1.2.0
+
+- Browse other users' show lists from the "What's everyone else watching?" link on My Shows
+- Add shows directly from another user's list with full TMDB sync (current season, episodes, streaming providers)
+- Toast confirmation when adding a show
+
+### v1.1.0
+
+- Swipe navigation between Dashboard and My Shows (including from show detail pages)
+- Show deletion with confirmation dialog
+- Optimized trending requests
+- Reduced jank on swipe transitions
+
+### v1.0.3
+
+- Lock icon for shows unavailable on streaming services
+- Dashboard animations
+
+### v1.0.2
+
+- Timezone fix for episode air dates
+- Handle unknown streaming providers gracefully
+
+### v1.0.1
+
+- Initial versioned release
+- Provider selection, multi-user support, episode tracking
+
 ## Attribution
 
 This product uses the TMDB API but is not endorsed or certified by TMDB.
