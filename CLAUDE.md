@@ -29,6 +29,7 @@
 - Shared UI components (e.g. `ConfirmDialog`) go in `src/components/ui/`.
 - **Client-side caching:** Module-level variables cache API responses (episodes, trending) across component remounts to avoid loading flashes on tab/swipe navigation. Caches are updated inline on user actions (e.g. marking watched) and refreshed on sync.
 - **Swipe navigation:** `useSwipeNavigation` hook enables horizontal swipe between Dashboard and My Shows tabs (including from ShowDetail pages). Swipes trigger a slide-in CSS animation on the `<main>` element.
+- **Social browse:** Users can view other users' show lists via a dialog opened from the "What's everyone else watching?" link at the bottom of the My Shows page. The `UserShowsDialog` component (`src/components/ui/UserShowsDialog.tsx`) fetches users from `GET /api/users/all` and their shows from `GET /api/users/:id/shows`. Shows can be added directly from the dialog — the add flow mirrors the search dialog (fetches TMDB details, sets current season/episode, syncs episodes). `ShowCard` accepts an optional `onAdd` prop that renders a green "+" button and switches the card from a `<Link>` to a `<div>`.
 
 ## Testing
 
