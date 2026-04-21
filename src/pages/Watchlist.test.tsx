@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
@@ -76,5 +77,30 @@ describe("Watchlist", () => {
     });
 
     expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
+  });
+
+  it("renders social link", async () => {
+    renderWatchlist();
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText("What's everyone else watching?")).toBeInTheDocument();
+  });
+
+  it("opens social dialog when clicking the link", async () => {
+    const user = userEvent.setup();
+    renderWatchlist();
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("What's everyone else watching?"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Browse Users")).toBeInTheDocument();
+    });
   });
 });

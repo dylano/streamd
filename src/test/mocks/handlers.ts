@@ -116,8 +116,61 @@ export const mockEpisodes: Episode[] = [
   },
 ];
 
+// Other mock users (for social/browse feature)
+export const mockOtherUsers = [
+  { id: 2, name: "Alice" },
+  { id: 3, name: "Bob" },
+];
+
+export const mockOtherUserShows: Show[] = [
+  {
+    id: 3,
+    tmdb_id: 1399,
+    name: "Breaking Bad",
+    poster_path: "/bb.jpg",
+    overview: "A high school chemistry teacher turned meth producer",
+    first_air_date: "2008-01-20",
+    status: "completed",
+    streaming_service: null,
+    total_seasons: 5,
+    total_episodes: 62,
+    current_season: null,
+    current_episode: null,
+    added_at: "2024-02-01T00:00:00Z",
+    updated_at: "2024-02-01T00:00:00Z",
+  },
+  {
+    id: 1,
+    tmdb_id: 4556,
+    name: "Scrubs",
+    poster_path: "/scrubs.jpg",
+    overview: "A comedy about hospital life",
+    first_air_date: "2001-10-02",
+    status: "watching",
+    streaming_service: null,
+    total_seasons: 9,
+    total_episodes: 182,
+    current_season: 2,
+    current_episode: 3,
+    added_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+];
+
 export const handlers = [
   // Users
+  http.get("/api/users/all", () => {
+    return HttpResponse.json([mockUser, ...mockOtherUsers]);
+  }),
+
+  http.get("/api/users/:id/shows", ({ params }) => {
+    const userId = Number(params.id);
+    if (userId === 2) {
+      return HttpResponse.json(mockOtherUserShows);
+    }
+    return HttpResponse.json([]);
+  }),
+
   http.get("/api/users", ({ request }) => {
     const url = new URL(request.url);
     const name = url.searchParams.get("name");

@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { userApi } from "../../api/client";
-import { ShowGrid } from "../shows";
-import type { Show } from "../../types";
+import { api, userApi } from "../../api/client";
+import { useShows } from "../../context/ShowsContext";
+import { useTMDBShow, useTMDBSeason, useTMDBWatchProviders } from "../../hooks/useTMDB";
+import { ShowCard } from "../shows/ShowCard";
+import type { Show, Episode } from "../../types";
 import styles from "./UserShowsDialog.module.css";
 
 interface User {
@@ -16,10 +18,18 @@ interface UserShowsDialogProps {
 }
 
 export function UserShowsDialog({ onClose, currentUserId }: UserShowsDialogProps) {
+  const { shows: myShows, addShow } = useShows();
+  const { fetchShow } = useTMDBShow();
+  const { fetchSeason } = useTMDBSeason();
+  const { fetchWatchProviders } = useTMDBWatchProviders();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
+  const [addedIds, setAddedIds] = useState<Set<number>>(new Set());
+  const [toast, setToast] = useState<string | null>(null);
+
+  const myTmdbIds = new Set(myShows.map((s) => s.tmdb_id));
 
   useEffect(() => {
     userApi.listAll().then((all) => {
@@ -52,6 +62,54 @@ export function UserShowsDialog({ onClose, currentUserId }: UserShowsDialogProps
   function handleBack() {
     setSelectedUser(null);
     setShows([]);
+  }
+
+  async function handleAdd(show: Show) {
+    try {
+      const [details, streamingService] = await Promise.all([
+        fetchShow(show.tmdb_id),
+        fetchWatchProviders(show.tmdb_id),
+      ]);
+      const latestSeason = details?.number_of_seasons ?? show.total_seasons;
+
+      const added = await addShow({
+        tmdb_id: show.tmdb_id,
+        name: show.name,
+        poster_path: show.poster_path,
+        overview: show.overview,
+        first_air_date: show.first_air_date,
+        status: "watchlist",
+        streaming_service: streamingService,
+        total_seasons: latestSeason,
+        total_episodes: details?.number_of_episodes ?? show.total_episodes,
+        current_season: latestSeason,
+        current_episode: 1,
+      });
+
+      // Sync the most recent season's episodes
+      if (details && latestSeason > 0) {
+        const seasonData = await fetchSeason(show.tmdb_id, latestSeason);
+        if (seasonData?.episodes) {
+          await api.post<Episode[]>("/episodes", {
+            show_id: added.id,
+            episodes: seasonData.episodes.map((ep) => ({
+              tmdb_id: ep.id,
+              season_number: ep.season_number,
+              episode_number: ep.episode_number,
+              name: ep.name,
+              air_date: ep.air_date,
+              runtime: ep.runtime,
+            })),
+          });
+        }
+      }
+
+      setAddedIds((prev) => new Set(prev).add(show.tmdb_id));
+      setToast(`'${show.name}' added to your shows`);
+      setTimeout(() => setToast(null), 1250);
+    } catch {
+      // Show may already exist — ignore
+    }
   }
 
   return createPortal(
@@ -98,9 +156,22 @@ export function UserShowsDialog({ onClose, currentUserId }: UserShowsDialogProps
           {loading ? (
             <p className={styles.loading}>Loading...</p>
           ) : selectedUser ? (
-            <div className={styles.readOnlyGrid}>
-              <ShowGrid shows={shows} emptyMessage="No shows yet" />
-            </div>
+            shows.length === 0 ? (
+              <p className={styles.loading}>No shows yet</p>
+            ) : (
+              <div className={styles.grid}>
+                {shows.map((show) => {
+                  const alreadyHave = myTmdbIds.has(show.tmdb_id) || addedIds.has(show.tmdb_id);
+                  return (
+                    <ShowCard
+                      key={show.id}
+                      show={show}
+                      onAdd={alreadyHave ? undefined : handleAdd}
+                    />
+                  );
+                })}
+              </div>
+            )
           ) : users.length === 0 ? (
             <p className={styles.loading}>No other users yet</p>
           ) : (
@@ -120,6 +191,7 @@ export function UserShowsDialog({ onClose, currentUserId }: UserShowsDialogProps
           )}
         </div>
       </div>
+      {toast && <div className={styles.toast}>{toast}</div>}
     </div>,
     document.body,
   );
