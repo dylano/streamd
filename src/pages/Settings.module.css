@@ -103,6 +103,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s;
+  text-decoration: none;
 }
 
 .secondaryButton:hover {

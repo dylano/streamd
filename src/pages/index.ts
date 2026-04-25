@@ -5,3 +5,4 @@ export { NewEpisodes } from "./NewEpisodes";
 export { Search } from "./Search";
 export { ShowDetail } from "./ShowDetail";
 export { Settings } from "./Settings";
+export { Admin } from "./Admin";

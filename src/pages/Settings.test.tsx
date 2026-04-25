@@ -4,10 +4,15 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { UserProvider } from "../context/UserContext";
 import { SettingsProvider } from "../context/SettingsContext";
+import { setApiUserId } from "../api/client";
+import { mockUser } from "../test/mocks/handlers";
 import { Settings } from "./Settings";
 
 afterEach(() => {
   vi.restoreAllMocks();
+  // Restore default mock user in case a test overrode it
+  localStorage.setItem("streamd-user", JSON.stringify(mockUser));
+  setApiUserId(mockUser.id);
 });
 
 function renderSettings() {
@@ -66,5 +71,20 @@ describe("Settings", () => {
 
     expect(screen.getByText(/Logged in as/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
+  });
+
+  it("does not show admin link for non-admin users", () => {
+    renderSettings();
+
+    expect(screen.queryByText("Admin panel")).not.toBeInTheDocument();
+  });
+
+  it("shows admin link for doliver", () => {
+    localStorage.setItem("streamd-user", JSON.stringify({ id: 1, name: "doliver" }));
+    setApiUserId(1);
+    renderSettings();
+
+    expect(screen.getByText("Admin panel")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open" })).toHaveAttribute("href", "/admin");
   });
 });

@@ -1,0 +1,104 @@
+.page h1 {
+  font-size: 24px;
+  margin: 0 0 24px;
+  color: var(--text-h);
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 32px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sectionTitle:first-of-type {
+  margin-top: 0;
+}
+
+/* Stats */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.statCard {
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.statLabel {
+  font-size: 13px;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+/* Users table */
+.userList {
+  background: var(--code-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.userRow:last-child {
+  border-bottom: none;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userName {
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.userMeta {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.deleteButton {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ef4444;
+  background: transparent;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.loading {
+  color: var(--text);
+  padding: 24px 0;
+}
+
+.error {
+  color: #ef4444;
+  padding: 16px 0;
+}

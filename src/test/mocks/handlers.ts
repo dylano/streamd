@@ -388,6 +388,37 @@ export const handlers = [
     });
   }),
 
+  // Admin
+  http.get("/api/admin/stats", () => {
+    return HttpResponse.json({
+      users: 3,
+      shows: 5,
+      episodes: 120,
+      watchedEpisodes: 45,
+    });
+  }),
+
+  http.get("/api/admin/users", () => {
+    return HttpResponse.json([
+      {
+        id: 1,
+        name: "doliver",
+        created_at: "2024-01-01T00:00:00",
+        show_count: 3,
+        watched_count: 20,
+      },
+      { id: 2, name: "Alice", created_at: "2024-02-15T00:00:00", show_count: 1, watched_count: 5 },
+      { id: 3, name: "Bob", created_at: "2024-03-10T00:00:00", show_count: 2, watched_count: 10 },
+    ]);
+  }),
+
+  http.delete("/api/admin/users/:id", ({ params }) => {
+    if (Number(params.id) === 1) {
+      return HttpResponse.json({ error: "Cannot delete your own account" }, { status: 400 });
+    }
+    return HttpResponse.json({ ok: true });
+  }),
+
   // Dev
   http.post("/api/dev/reset", () => {
     return HttpResponse.json({ success: true, message: "Database reset complete" });

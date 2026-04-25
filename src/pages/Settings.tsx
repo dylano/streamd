@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useUser } from "../context/UserContext";
+import { isAdmin } from "../utils/admin";
 import styles from "./Settings.module.css";
 
 export function Settings() {
@@ -55,6 +57,23 @@ export function Settings() {
           </button>
         </div>
       </div>
+
+      {isAdmin(user?.name) && (
+        <>
+          <h2 className={styles.sectionTitle}>Admin</h2>
+          <div className={styles.section}>
+            <div className={styles.setting}>
+              <div className={styles.settingInfo}>
+                <span className={styles.settingLabel}>Admin panel</span>
+                <span className={styles.settingDesc}>User management and database stats</span>
+              </div>
+              <Link to="/admin" className={styles.secondaryButton}>
+                Open
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
 
       <p className={styles.version}>
         v{__APP_VERSION__} &middot; {__BUILD_COMMIT__}

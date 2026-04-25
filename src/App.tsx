@@ -5,7 +5,7 @@ import { SettingsProvider } from "./context/SettingsContext";
 import { SyncProvider } from "./context/SyncContext";
 import { UserGate } from "./components/UserGate";
 import { Layout } from "./components/layout";
-import { Dashboard, Watchlist, ShowDetail, Settings } from "./pages";
+import { Dashboard, Watchlist, ShowDetail, Settings, Admin } from "./pages";
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
                     <Route path="watchlist" element={<Watchlist />} />
                     <Route path="show/:id" element={<ShowDetail />} />
                     <Route path="settings" element={<Settings />} />
+                    <Route path="admin" element={<Admin />} />
                     {/* Redirect old routes */}
                     <Route path="history" element={<Navigate to="/" replace />} />
                     <Route path="new-episodes" element={<Navigate to="/" replace />} />
