@@ -175,21 +175,21 @@ export const handlers = [
     const url = new URL(request.url);
     const name = url.searchParams.get("name");
     if (name?.toLowerCase() === mockUser.name.toLowerCase()) {
-      return HttpResponse.json(mockUser);
+      return HttpResponse.json({ ...mockUser, isAdmin: false });
     }
     return HttpResponse.json({ error: "User not found" }, { status: 404 });
   }),
 
   http.get("/api/users/:id", ({ params }) => {
     if (Number(params.id) === mockUser.id) {
-      return HttpResponse.json(mockUser);
+      return HttpResponse.json({ ...mockUser, isAdmin: false });
     }
     return HttpResponse.json({ error: "User not found" }, { status: 404 });
   }),
 
   http.post("/api/users", async ({ request }) => {
     const body = (await request.json()) as { name: string };
-    return HttpResponse.json({ id: 2, name: body.name }, { status: 201 });
+    return HttpResponse.json({ id: 2, name: body.name, isAdmin: false }, { status: 201 });
   }),
 
   // Health check
@@ -386,6 +386,37 @@ export const handlers = [
       total_pages: 1,
       total_results: 4,
     });
+  }),
+
+  // Admin
+  http.get("/api/admin/stats", () => {
+    return HttpResponse.json({
+      users: 3,
+      shows: 5,
+      episodes: 120,
+      watchedEpisodes: 45,
+    });
+  }),
+
+  http.get("/api/admin/users", () => {
+    return HttpResponse.json([
+      {
+        id: 1,
+        name: "ima_admin",
+        created_at: "2024-01-01T00:00:00",
+        show_count: 3,
+        watched_count: 20,
+      },
+      { id: 2, name: "Alice", created_at: "2024-02-15T00:00:00", show_count: 1, watched_count: 5 },
+      { id: 3, name: "Bob", created_at: "2024-03-10T00:00:00", show_count: 2, watched_count: 10 },
+    ]);
+  }),
+
+  http.delete("/api/admin/users/:id", ({ params }) => {
+    if (Number(params.id) === 1) {
+      return HttpResponse.json({ error: "Cannot delete your own account" }, { status: 400 });
+    }
+    return HttpResponse.json({ ok: true });
   }),
 
   // Dev

@@ -3,6 +3,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    is_admin INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now'))
 );
 

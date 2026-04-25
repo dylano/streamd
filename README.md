@@ -16,6 +16,7 @@ TV show tracker for managing shows across streaming services. Lightweight name-b
 - **Episode sync** pulls new episode data from TMDB automatically (or on demand)
 - **Multiple users** on the same instance with isolated watch progress — shows and episode metadata are shared, but what you're watching and where you're at is yours
 - **Streaming providers** displayed per show so you know where to watch
+- **Admin panel** for managing users and viewing database stats (gated by `is_admin` flag)
 
 ## Tech Stack
 
@@ -91,6 +92,11 @@ For production, set `TMDB_API_KEY` in Cloudflare Pages dashboard under Settings 
 Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
+
+### v1.3.0
+
+- Admin panel at `/admin` with user management (delete users) and database stats
+- Admin access controlled by `is_admin` column in the database
 
 ### v1.2.0
 
