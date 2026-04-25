@@ -30,6 +30,9 @@ dist-ssr
 # D1 backups
 schema/backup-*.sql
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # Functions build output
 functions/**/*.js
 functions/tsconfig.tsbuildinfo
