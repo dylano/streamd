@@ -1,5 +1,3 @@
-import { isAdmin } from "../_admin";
-
 interface Env {
   DB: D1Database;
 }
@@ -12,11 +10,11 @@ export async function requireAdmin(
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await context.env.DB.prepare("SELECT name FROM users WHERE id = ?")
+  const user = await context.env.DB.prepare("SELECT is_admin FROM users WHERE id = ?")
     .bind(userId)
-    .first<{ name: string }>();
+    .first<{ is_admin: number }>();
 
-  if (!user || !isAdmin(user.name)) {
+  if (!user || !user.is_admin) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
