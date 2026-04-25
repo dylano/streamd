@@ -94,20 +94,23 @@
 }
 
 .secondaryButton {
+  min-width: 80px;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
   color: var(--text-h);
-  background: var(--code-bg);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s;
   text-decoration: none;
+  text-align: center;
 }
 
 .secondaryButton:hover {
-  background: var(--border);
+  background: var(--text-h);
+  color: var(--bg);
 }
 
 .version {

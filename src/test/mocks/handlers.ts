@@ -175,21 +175,21 @@ export const handlers = [
     const url = new URL(request.url);
     const name = url.searchParams.get("name");
     if (name?.toLowerCase() === mockUser.name.toLowerCase()) {
-      return HttpResponse.json(mockUser);
+      return HttpResponse.json({ ...mockUser, isAdmin: false });
     }
     return HttpResponse.json({ error: "User not found" }, { status: 404 });
   }),
 
   http.get("/api/users/:id", ({ params }) => {
     if (Number(params.id) === mockUser.id) {
-      return HttpResponse.json(mockUser);
+      return HttpResponse.json({ ...mockUser, isAdmin: false });
     }
     return HttpResponse.json({ error: "User not found" }, { status: 404 });
   }),
 
   http.post("/api/users", async ({ request }) => {
     const body = (await request.json()) as { name: string };
-    return HttpResponse.json({ id: 2, name: body.name }, { status: 201 });
+    return HttpResponse.json({ id: 2, name: body.name, isAdmin: false }, { status: 201 });
   }),
 
   // Health check

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useUser } from "../context/UserContext";
-import { isAdmin } from "../utils/admin";
 import styles from "./Settings.module.css";
 
 export function Settings() {
@@ -58,7 +57,7 @@ export function Settings() {
         </div>
       </div>
 
-      {isAdmin(user?.name) && (
+      {user?.isAdmin && (
         <>
           <h2 className={styles.sectionTitle}>Admin</h2>
           <div className={styles.section}>

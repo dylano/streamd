@@ -10,7 +10,7 @@ import { mockUser } from "../test/mocks/handlers";
 import { server } from "../test/mocks/server";
 import { Admin } from "./Admin";
 
-const adminUser = { id: 1, name: "doliver" };
+const adminUser = { id: 1, name: "doliver", isAdmin: true };
 
 afterEach(() => {
   vi.restoreAllMocks();

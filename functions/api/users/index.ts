@@ -1,3 +1,5 @@
+import { isAdmin } from "../_admin";
+
 interface Env {
   DB: D1Database;
 }
@@ -25,7 +27,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
 
-  return Response.json(user);
+  return Response.json({ ...user, isAdmin: isAdmin(user.name) });
 };
 
 // POST /api/users - Create a new user
@@ -53,5 +55,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(name)
     .first<User>();
 
-  return Response.json(user, { status: 201 });
+  if (!user) {
+    return Response.json({ error: "Failed to create user" }, { status: 500 });
+  }
+
+  return Response.json(
+    { id: user.id, name: user.name, isAdmin: isAdmin(user.name) },
+    { status: 201 },
+  );
 };

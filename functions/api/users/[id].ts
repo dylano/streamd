@@ -1,3 +1,5 @@
+import { isAdmin } from "../_admin";
+
 interface Env {
   DB: D1Database;
 }
@@ -19,5 +21,5 @@ export const onRequestGet: PagesFunction<Env, "id"> = async (context) => {
     return Response.json({ error: "User not found" }, { status: 404 });
   }
 
-  return Response.json(user);
+  return Response.json({ ...user, isAdmin: isAdmin(user.name) });
 };

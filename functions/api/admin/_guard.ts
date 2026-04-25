@@ -1,5 +1,4 @@
-// Must match ADMIN_NAME in src/utils/admin.ts
-const ADMIN_NAME = "doliver";
+import { isAdmin } from "../_admin";
 
 interface Env {
   DB: D1Database;
@@ -17,7 +16,7 @@ export async function requireAdmin(
     .bind(userId)
     .first<{ name: string }>();
 
-  if (!user || user.name.toLowerCase() !== ADMIN_NAME) {
+  if (!user || !isAdmin(user.name)) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 

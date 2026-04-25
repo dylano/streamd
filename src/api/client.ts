@@ -56,17 +56,18 @@ export const api = {
 };
 
 // User API methods — these don't require X-User-Id (pre-auth)
+type UserResponse = { id: number; name: string; isAdmin: boolean };
+
 export const userApi = {
-  lookup: (name: string) =>
-    request<{ id: number; name: string }>(`/users?name=${encodeURIComponent(name)}`),
+  lookup: (name: string) => request<UserResponse>(`/users?name=${encodeURIComponent(name)}`),
 
   create: (name: string) =>
-    request<{ id: number; name: string }>("/users", {
+    request<UserResponse>("/users", {
       method: "POST",
       body: JSON.stringify({ name }),
     }),
 
-  validate: (id: number) => request<{ id: number; name: string }>(`/users/${id}`),
+  validate: (id: number) => request<UserResponse>(`/users/${id}`),
 
   listAll: () => request<{ id: number; name: string }[]>("/users/all"),
 

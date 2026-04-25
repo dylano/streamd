@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import { api, ApiError } from "../api/client";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { useUser } from "../context/UserContext";
-import { isAdmin } from "../utils/admin";
 import styles from "./Admin.module.css";
 
 interface AdminUser {
@@ -24,7 +23,7 @@ interface Stats {
 export function Admin() {
   const { user } = useUser();
 
-  if (!isAdmin(user?.name)) {
+  if (!user?.isAdmin) {
     return <Navigate to="/" replace />;
   }
 

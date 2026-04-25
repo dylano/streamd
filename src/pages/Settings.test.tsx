@@ -4,8 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { UserProvider } from "../context/UserContext";
 import { SettingsProvider } from "../context/SettingsContext";
+import { http, HttpResponse } from "msw";
 import { setApiUserId } from "../api/client";
 import { mockUser } from "../test/mocks/handlers";
+import { server } from "../test/mocks/server";
 import { Settings } from "./Settings";
 
 afterEach(() => {
@@ -79,9 +81,11 @@ describe("Settings", () => {
     expect(screen.queryByText("Admin panel")).not.toBeInTheDocument();
   });
 
-  it("shows admin link for doliver", () => {
-    localStorage.setItem("streamd-user", JSON.stringify({ id: 1, name: "doliver" }));
+  it("shows admin link for admin user", () => {
+    const adminUser = { id: 1, name: "doliver", isAdmin: true };
+    localStorage.setItem("streamd-user", JSON.stringify(adminUser));
     setApiUserId(1);
+    server.use(http.get("/api/users/1", () => HttpResponse.json(adminUser)));
     renderSettings();
 
     expect(screen.getByText("Admin panel")).toBeInTheDocument();
