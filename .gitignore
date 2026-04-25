@@ -27,6 +27,9 @@ dist-ssr
 .wrangler
 .dev.vars
 
+# D1 backups
+schema/backup-*.sql
+
 # Functions build output
 functions/**/*.js
 functions/tsconfig.tsbuildinfo
