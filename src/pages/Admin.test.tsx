@@ -10,7 +10,7 @@ import { mockUser } from "../test/mocks/handlers";
 import { server } from "../test/mocks/server";
 import { Admin } from "./Admin";
 
-const adminUser = { id: 1, name: "doliver", isAdmin: true };
+const adminUser = { id: 1, name: "ima_admin", isAdmin: true };
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -21,7 +21,7 @@ afterEach(() => {
 function seedAdmin() {
   localStorage.setItem("streamd-user", JSON.stringify(adminUser));
   setApiUserId(adminUser.id);
-  // Override user validation to return doliver instead of TestUser
+  // Override user validation to return ima_admin instead of TestUser
   server.use(http.get("/api/users/1", () => HttpResponse.json(adminUser)));
 }
 
@@ -61,7 +61,7 @@ describe("Admin", () => {
     expect(screen.getByText("120")).toBeInTheDocument(); // episodes
     expect(screen.getByText("45")).toBeInTheDocument(); // watched
 
-    expect(screen.getByText("doliver")).toBeInTheDocument();
+    expect(screen.getByText("ima_admin")).toBeInTheDocument();
     expect(screen.getByText("Alice")).toBeInTheDocument();
     expect(screen.getByText("Bob")).toBeInTheDocument();
   });
@@ -74,7 +74,7 @@ describe("Admin", () => {
       expect(screen.getByText("Alice")).toBeInTheDocument();
     });
 
-    // Should have delete buttons for Alice and Bob, but not doliver
+    // Should have delete buttons for Alice and Bob, but not ima_admin
     const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
     expect(deleteButtons).toHaveLength(2);
   });

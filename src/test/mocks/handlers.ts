@@ -402,7 +402,7 @@ export const handlers = [
     return HttpResponse.json([
       {
         id: 1,
-        name: "doliver",
+        name: "ima_admin",
         created_at: "2024-01-01T00:00:00",
         show_count: 3,
         watched_count: 20,

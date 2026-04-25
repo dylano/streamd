@@ -82,7 +82,7 @@ describe("Settings", () => {
   });
 
   it("shows admin link for admin user", () => {
-    const adminUser = { id: 1, name: "doliver", isAdmin: true };
+    const adminUser = { id: 1, name: "ima_admin", isAdmin: true };
     localStorage.setItem("streamd-user", JSON.stringify(adminUser));
     setApiUserId(1);
     server.use(http.get("/api/users/1", () => HttpResponse.json(adminUser)));

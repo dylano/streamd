@@ -2,5 +2,3 @@
 -- Adds is_admin column and grants admin to doliver
 
 ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0;
-
-UPDATE users SET is_admin = 1 WHERE name = 'doliver';
