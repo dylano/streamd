@@ -43,7 +43,13 @@ function AdminContent({ user }: { user: { id: number; name: string } }) {
         api.get<AdminUser[]>("/admin/users"),
         api.get<Stats>("/admin/stats"),
       ]);
-      setUsers(usersData);
+      setUsers(
+        [...usersData].sort((a, b) => {
+          if (a.id === user.id) return -1;
+          if (b.id === user.id) return 1;
+          return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+        }),
+      );
       setStats(statsData);
       setError(null);
     } catch {
