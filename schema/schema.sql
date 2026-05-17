@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS user_shows (
     status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
     current_season INTEGER,
     current_episode INTEGER,
+    rating INTEGER,
     added_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (user_id, show_id),

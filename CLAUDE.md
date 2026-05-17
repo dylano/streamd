@@ -36,6 +36,7 @@
 ## Migrations
 
 - Schema migrations live in `schema/` as numbered SQL files (e.g. `migration-003-show-rating.sql`).
+- **`schema.sql` is the canonical current schema** — always update it alongside any new migration so a fresh database only needs `schema.sql`. Migrations are only for upgrading existing databases.
 - **Local:** `wrangler d1 execute` may target a different sqlite file than `wrangler pages dev` uses. If a migration doesn't take effect locally, run it directly against the active sqlite file under `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/` (the larger, recently-modified one), or use `npm run db:reset` to start fresh.
 - **Remote:** `npx wrangler d1 execute streamd-db --remote --file=schema/<migration>.sql`. Non-destructive migrations (ADD COLUMN) can be run ahead of code deployment.
 
