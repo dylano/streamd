@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS episodes (
 CREATE TABLE IF NOT EXISTS user_shows (
     user_id INTEGER NOT NULL,
     show_id INTEGER NOT NULL,
-    status TEXT CHECK(status IN ('watching', 'watchlist', 'completed', 'dropped')) DEFAULT 'watchlist',
+    status TEXT CHECK(status IN ('watchlist', 'deactivated')) DEFAULT 'watchlist',
     current_season INTEGER,
     current_episode INTEGER,
     rating INTEGER,

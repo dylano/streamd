@@ -71,7 +71,10 @@ export function ShowCard({ show, onAdd }: ShowCardProps) {
   }
 
   return (
-    <Link to={`/show/${show.id}`} className={styles.card}>
+    <Link
+      to={`/show/${show.id}`}
+      className={`${styles.card} ${show.status === "deactivated" ? styles.deactivated : ""}`}
+    >
       {content}
     </Link>
   );

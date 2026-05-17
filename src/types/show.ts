@@ -1,4 +1,4 @@
-export type ShowStatus = "watching" | "watchlist" | "completed" | "dropped";
+export type ShowStatus = "watchlist" | "deactivated";
 
 export interface Show {
   id: number;

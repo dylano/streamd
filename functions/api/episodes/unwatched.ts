@@ -49,6 +49,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       JOIN episodes e ON e.show_id = s.id
       LEFT JOIN user_episodes ue ON e.id = ue.episode_id AND ue.user_id = ?
       WHERE us.user_id = ?
+        AND us.status != 'deactivated'
         AND COALESCE(ue.watched, 0) = 0
         AND e.air_date IS NOT NULL
         AND e.air_date <= ?

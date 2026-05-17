@@ -18,6 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       FROM user_shows us
       JOIN shows s ON us.show_id = s.id
       WHERE us.user_id = ?
+        AND us.status != 'deactivated'
       ORDER BY us.updated_at DESC`,
     )
       .bind(userId)

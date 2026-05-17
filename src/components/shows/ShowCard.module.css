@@ -117,3 +117,11 @@
     margin: 4px 0 0;
   }
 }
+
+.deactivated {
+  opacity: 0.45;
+}
+
+.deactivated:hover {
+  opacity: 0.65;
+}

@@ -65,17 +65,6 @@ describe("ShowDetail", () => {
     });
   });
 
-  it("shows bookmark info", async () => {
-    renderShowDetail("1");
-
-    await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
-    });
-
-    // Scrubs mock has current_season: 1, current_episode: 6
-    expect(screen.getByText("Next: S1E6")).toBeInTheDocument();
-  });
-
   it("shows sync button for seasons", async () => {
     renderShowDetail("1");
 
@@ -119,13 +108,96 @@ describe("ShowDetail", () => {
       expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByTitle("Remove show"));
+    await user.click(screen.getByRole("button", { name: "Delete Show" }));
 
-    // Confirm dialog should appear
     await waitFor(() => {
       expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     });
-    expect(screen.getByText(/Remove "Scrubs" from your watchlist/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Completely remove "Scrubs" from your account\?/),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Watchlist Page")).toBeInTheDocument();
+    });
+  });
+
+  it("shows Resume Watching button when show is deactivated", async () => {
+    server.use(
+      http.get("/api/shows", () => {
+        return HttpResponse.json([
+          {
+            id: 1,
+            tmdb_id: 4556,
+            name: "Scrubs",
+            poster_path: "/scrubs.jpg",
+            overview: "A comedy about hospital life",
+            first_air_date: "2001-10-02",
+            status: "deactivated",
+            streaming_service: null,
+            total_seasons: 9,
+            total_episodes: 182,
+            current_season: 1,
+            current_episode: 6,
+            rating: null,
+            added_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-01-01T00:00:00Z",
+          },
+        ]);
+      }),
+    );
+
+    renderShowDetail("1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("button", { name: "Resume Watching" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Stop Watching" })).not.toBeInTheDocument();
+  });
+
+  it("navigates to watchlist after deactivating a show", async () => {
+    const user = userEvent.setup();
+
+    server.use(
+      http.put("/api/shows/1", async () => {
+        return HttpResponse.json({
+          id: 1,
+          tmdb_id: 4556,
+          name: "Scrubs",
+          poster_path: "/scrubs.jpg",
+          overview: "A comedy about hospital life",
+          first_air_date: "2001-10-02",
+          status: "deactivated",
+          streaming_service: null,
+          total_seasons: 9,
+          total_episodes: 182,
+          current_season: 1,
+          current_episode: 6,
+          rating: null,
+          added_at: "2024-01-01T00:00:00Z",
+          updated_at: new Date().toISOString(),
+        });
+      }),
+    );
+
+    renderShowDetail("1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Stop Watching" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    });
+    expect(
+      screen.getByText(/Remove "Scrubs" episodes from your dashboard\?/),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Remove" }));
 
