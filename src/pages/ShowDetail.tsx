@@ -5,6 +5,7 @@ import { useEpisodes } from "../hooks/useEpisodes";
 import { useTMDBShow, useTMDBSeason, parseStreamingProviders } from "../hooks/useTMDB";
 import { EpisodeRow, ProviderPicker } from "../components/shows";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
+import { StarRating } from "../components/ui/StarRating";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
 import styles from "./ShowDetail.module.css";
 
@@ -76,6 +77,11 @@ export function ShowDetail() {
     }
   }
 
+  async function handleRateShow(rating: number) {
+    if (!show) return;
+    await updateShow(show.id, { rating });
+  }
+
   async function handleSetProvider(streaming_service: string) {
     if (!show) return;
     await updateShow(show.id, { streaming_service });
@@ -98,6 +104,7 @@ export function ShowDetail() {
       <div className={styles.header}>
         {posterUrl && <img src={posterUrl} alt={show.name} className={styles.poster} />}
         <div className={styles.info}>
+          <StarRating rating={show.rating} onChange={handleRateShow} />
           <h1>{show.name}</h1>
           {show.first_air_date && (
             <p className={styles.year}>{show.first_air_date.split("-")[0]}</p>

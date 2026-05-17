@@ -13,6 +13,7 @@ export interface Show {
   total_episodes: number;
   current_season: number | null;
   current_episode: number | null;
+  rating: number | null;
   added_at: string;
   updated_at: string;
 }
@@ -36,4 +37,5 @@ export interface UpdateShowInput {
   streaming_service?: string | null;
   current_season?: number | null;
   current_episode?: number | null;
+  rating?: number | null;
 }
