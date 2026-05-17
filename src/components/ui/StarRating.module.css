@@ -1,0 +1,34 @@
+.stars {
+  display: flex;
+  justify-content: flex-start;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .stars {
+    justify-content: center;
+  }
+}
+
+.star {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 4px;
+  transition: transform 0.1s;
+}
+
+.star:hover {
+  transform: scale(1.15);
+}
+
+.filled {
+  color: #f59e0b;
+}
+
+.empty {
+  color: var(--text-muted, #6b7280);
+}

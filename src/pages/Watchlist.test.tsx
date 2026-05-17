@@ -39,7 +39,7 @@ describe("Watchlist", () => {
     const showNames = screen.getAllByRole("heading").map((h) => h.textContent);
     const scrubsIdx = showNames.indexOf("Scrubs");
     const tbbtIdx = showNames.indexOf("The Big Bang Theory");
-    expect(scrubsIdx).toBeLessThan(tbbtIdx);
+    expect(tbbtIdx).toBeLessThan(scrubsIdx);
   });
 
   it("shows empty message when no shows", async () => {

@@ -5,6 +5,7 @@
 - `npm run dev` — full stack (Vite + Wrangler + D1). Needs `TMDB_API_KEY` in `.env.local`.
 - `npm run dev:mock` — frontend only with MSW mocks. No Wrangler or API key needed.
 - `npm run test:run` — run all tests once.
+- `npm run build` — full type-check including `src/test/` (use this to validate; `tsc --noEmit` skips test files).
 
 ## Architecture
 
@@ -17,7 +18,7 @@
 ## Data Model
 
 - **Shared metadata:** `shows` and `episodes` contain TMDB data shared across all users.
-- **Per-user state:** `user_shows` (status, bookmark) and `user_episodes` (watched, watched_at) are join tables scoped by `user_id`.
+- **Per-user state:** `user_shows` (status, bookmark, rating) and `user_episodes` (watched, watched_at) are join tables scoped by `user_id`.
 - **Users:** `users` table with `name` (unique, case-insensitive via `COLLATE NOCASE`) and `is_admin` flag (INTEGER, default 0).
 - The `UserGate` component in `src/components/UserGate.tsx` blocks the app until a user is identified. All data-fetching contexts (`ShowsProvider`, `SyncProvider`) mount only after user identity is established.
 
@@ -34,7 +35,7 @@
 
 ## Migrations
 
-- Schema migrations live in `schema/` as numbered SQL files (e.g. `migration-002-admin-flag.sql`).
+- Schema migrations live in `schema/` as numbered SQL files (e.g. `migration-003-show-rating.sql`).
 - **Local:** `wrangler d1 execute` may target a different sqlite file than `wrangler pages dev` uses. If a migration doesn't take effect locally, run it directly against the active sqlite file under `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/` (the larger, recently-modified one), or use `npm run db:reset` to start fresh.
 - **Remote:** `npx wrangler d1 execute streamd-db --remote --file=schema/<migration>.sql`. Non-destructive migrations (ADD COLUMN) can be run ahead of code deployment.
 
@@ -43,3 +44,4 @@
 - MSW handles all API mocking. Handlers in `src/test/mocks/handlers.ts`, server setup in `src/test/mocks/server.ts`.
 - Test setup seeds localStorage with a mock user and calls `setApiUserId()` so providers work without a real backend.
 - Page components need `<MemoryRouter>`, `<UserProvider>`, `<SettingsProvider>`, and usually `<ShowsProvider>` as wrappers.
+- **Always run `npm run build` before considering a task done.** `tsc --noEmit` skips `src/test/` (see `tsconfig.app.json`) so type errors in mock/test files go undetected until CI fails.
