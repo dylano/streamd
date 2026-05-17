@@ -44,6 +44,20 @@ npm run db:reset
 
 Dev server runs at http://localhost:5173 (API proxied to port 8788)
 
+### Running migrations locally
+
+```bash
+npx wrangler d1 execute streamd-db --local --file=schema/<migration>.sql
+```
+
+If changes don't take effect, Wrangler may be targeting a different SQLite file than the dev server uses. Run the migration directly against the active file instead:
+
+```bash
+sqlite3 .wrangler/state/v3/d1/miniflare-D1DatabaseObject/<hash>.sqlite < schema/<migration>.sql
+```
+
+The active file is the larger, recently-modified `.sqlite` file in that directory.
+
 ## Scripts
 
 | Command            | Description                               |
@@ -87,11 +101,34 @@ For production, set `TMDB_API_KEY` in Cloudflare Pages dashboard under Settings 
    - Variable name: `DB`
    - Database: `streamd-db`
 
+### Running migrations on production
+
+```bash
+npx wrangler d1 execute streamd-db --remote --file=schema/<migration>.sql
+```
+
+Non-destructive migrations (ADD COLUMN) can be run ahead of code deployment.
+
 ### Deploying updates
 
 Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
+
+### v1.4.0
+
+- 5-star rating system for tracked shows, set from the show detail page
+- Ratings are per-user and stored in the database (`migration-003-show-rating.sql`)
+
+### v1.3.2
+
+- Sort shows alphabetically ignoring leading articles (The, A, An)
+- API key variable fix
+
+### v1.3.1
+
+- Blue favicon with iPhone home screen icon support
+- UI tweaks and toolchain updates (Node 24)
 
 ### v1.3.0
 
