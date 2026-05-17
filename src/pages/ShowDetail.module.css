@@ -40,7 +40,7 @@
 
 .providers {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   margin: 12px 0 16px;
 }
@@ -217,5 +217,9 @@
 
   .poster {
     width: 120px;
+  }
+
+  .providers {
+    justify-content: center;
   }
 }

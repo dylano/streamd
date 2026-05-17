@@ -1,8 +1,14 @@
 .stars {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 4px;
   margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .stars {
+    justify-content: center;
+  }
 }
 
 .star {
