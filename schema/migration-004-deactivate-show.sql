@@ -14,4 +14,6 @@ CREATE TABLE IF NOT EXISTS user_shows (
     FOREIGN KEY (show_id) REFERENCES shows(id) ON DELETE CASCADE
 );
 
-INSERT INTO user_shows SELECT * FROM user_shows_archive;
+INSERT INTO user_shows (user_id, show_id, status, current_season, current_episode, rating, added_at, updated_at)
+SELECT user_id, show_id, status, current_season, current_episode, rating, added_at, updated_at
+FROM user_shows_archive;
