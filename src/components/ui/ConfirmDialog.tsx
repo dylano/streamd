@@ -4,7 +4,7 @@ import styles from "./ConfirmDialog.module.css";
 
 interface ConfirmDialogProps {
   message: string;
-  confirmLabel?: string;
+  confirmLabel: string;
   cancelLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
@@ -12,7 +12,7 @@ interface ConfirmDialogProps {
 
 export function ConfirmDialog({
   message,
-  confirmLabel = "Remove",
+  confirmLabel,
   cancelLabel = "Cancel",
   onConfirm,
   onCancel,

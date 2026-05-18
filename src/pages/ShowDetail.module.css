@@ -129,6 +129,23 @@
   background: rgba(239, 68, 68, 0.1);
 }
 
+.resumeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  color: #16a34a;
+  background: transparent;
+  border: 1px solid #16a34a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.resumeButton:hover {
+  background: rgba(22, 163, 74, 0.1);
+}
+
 .seasons {
   background: var(--code-bg);
   border-radius: 8px;

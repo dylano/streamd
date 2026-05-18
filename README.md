@@ -115,6 +115,13 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.5.0
+
+- Deactivate a show to remove it from the Dashboard without deleting it — use "Stop Watching" on the show detail page
+- Deactivated shows appear muted on My Shows and can be reactivated with "Resume Watching"
+- Simplified show status model: status is now `watchlist` or `deactivated` (`migration-004-deactivate-show.sql`)
+- Removed dead History page
+
 ### v1.4.0
 
 - 5-star rating system for tracked shows, set from the show detail page

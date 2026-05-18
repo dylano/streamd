@@ -64,6 +64,7 @@ describe("ShowsContext", () => {
             total_episodes: 182,
             current_season: 1,
             current_episode: 6,
+            rating: null,
             added_at: "2024-01-01T00:00:00Z",
             updated_at: new Date().toISOString(),
           });
@@ -77,11 +78,11 @@ describe("ShowsContext", () => {
       });
 
       await act(async () => {
-        await result.current.updateShow(1, { status: "watching" });
+        await result.current.updateShow(1, { status: "deactivated" });
       });
 
       const updatedShow = result.current.shows.find((s) => s.id === 1);
-      expect(updatedShow?.status).toBe("watching");
+      expect(updatedShow?.status).toBe("deactivated");
     });
 
     it("deletes a show", async () => {

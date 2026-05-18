@@ -10,7 +10,6 @@
 }
 
 .card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow);
 }
 
@@ -116,4 +115,13 @@
     font-size: 12px;
     margin: 4px 0 0;
   }
+}
+
+.deactivated {
+  filter: grayscale(100%);
+  opacity: 0.6;
+}
+
+.deactivated:hover {
+  opacity: 0.85;
 }

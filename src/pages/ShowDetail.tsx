@@ -23,6 +23,7 @@ export function ShowDetail() {
   const { show: tmdbShow, fetchShow: fetchTMDBShow } = useTMDBShow();
   const { fetchSeason } = useTMDBSeason();
   const [pickingProvider, setPickingProvider] = useState(false);
+  const [confirmingDashboardRemoval, setConfirmingDashboardRemoval] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
@@ -92,6 +93,17 @@ export function ShowDetail() {
     if (!show) return;
     await deleteShow(show.id);
     navigate("/watchlist");
+  }
+
+  async function handleDeactivate() {
+    if (!show) return;
+    await updateShow(show.id, { status: "deactivated" });
+    navigate("/watchlist");
+  }
+
+  async function handleReactivate() {
+    if (!show) return;
+    await updateShow(show.id, { status: "watchlist" });
   }
 
   async function handleToggleWatched(episodeId: number, watched: boolean) {
@@ -175,33 +187,29 @@ export function ShowDetail() {
           {show.overview && <p className={styles.overview}>{show.overview}</p>}
 
           <div className={styles.meta}>
-            {show.current_season && show.current_episode ? (
-              <span className={styles.bookmark}>
-                Next: S{show.current_season}E{show.current_episode}
-              </span>
+            {show.status === "deactivated" ? (
+              <button
+                onClick={handleReactivate}
+                className={styles.resumeButton}
+                type="button"
+              >
+                Resume Watching
+              </button>
             ) : (
-              <span className={styles.bookmark}>Caught up</span>
+              <button
+                onClick={() => setConfirmingDashboardRemoval(true)}
+                className={styles.deleteButton}
+                type="button"
+              >
+                Stop Watching
+              </button>
             )}
             <button
               onClick={() => setConfirmingDelete(true)}
               className={styles.deleteButton}
-              title="Remove show"
               type="button"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 6h18" />
-                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-              </svg>
+              Delete Show
             </button>
           </div>
         </div>
@@ -256,9 +264,19 @@ export function ShowDetail() {
 
       {confirmingDelete && (
         <ConfirmDialog
-          message={`Remove "${show.name}" from your watchlist?`}
+          message={`Delete "${show.name}" from your account?`}
+          confirmLabel="Delete"
           onConfirm={handleDelete}
           onCancel={() => setConfirmingDelete(false)}
+        />
+      )}
+
+      {confirmingDashboardRemoval && (
+        <ConfirmDialog
+          message={`Remove "${show.name}" episodes from your dashboard?`}
+          confirmLabel="Remove"
+          onConfirm={handleDeactivate}
+          onCancel={() => setConfirmingDashboardRemoval(false)}
         />
       )}
     </div>

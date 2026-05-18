@@ -15,6 +15,9 @@ export function Watchlist() {
   const { user } = useUser();
   const [showSocial, setShowSocial] = useState(false);
   const sortedShows = [...shows].sort((a, b) => {
+    const aDeactivated = a.status === "deactivated" ? 1 : 0;
+    const bDeactivated = b.status === "deactivated" ? 1 : 0;
+    if (aDeactivated !== bDeactivated) return aDeactivated - bDeactivated;
     return buildSortString(a.name).localeCompare(buildSortString(b.name));
   });
 

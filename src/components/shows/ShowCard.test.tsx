@@ -22,6 +22,7 @@ const mockShow: Show = {
   total_episodes: 182,
   current_season: 1,
   current_episode: 6,
+  rating: null,
   added_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
 };
@@ -89,5 +90,18 @@ describe("ShowCard", () => {
 
     await user.click(screen.getByTitle("Add to my shows"));
     expect(handleAdd).toHaveBeenCalledWith(mockShow);
+  });
+
+  it("applies deactivated class when show is deactivated", () => {
+    const deactivatedShow: Show = { ...mockShow, status: "deactivated" };
+    renderWithRouter(<ShowCard show={deactivatedShow} />);
+    const link = screen.getByRole("link");
+    expect(link.className).toContain("deactivated");
+  });
+
+  it("does not apply deactivated class when show is active", () => {
+    renderWithRouter(<ShowCard show={mockShow} />);
+    const link = screen.getByRole("link");
+    expect(link.className).not.toContain("deactivated");
   });
 });
