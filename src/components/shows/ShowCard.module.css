@@ -10,7 +10,6 @@
 }
 
 .card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow);
 }
 
@@ -119,9 +118,10 @@
 }
 
 .deactivated {
-  opacity: 0.45;
+  filter: grayscale(100%);
+  opacity: 0.6;
 }
 
 .deactivated:hover {
-  opacity: 0.65;
+  opacity: 0.85;
 }

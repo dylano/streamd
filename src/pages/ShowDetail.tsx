@@ -264,7 +264,7 @@ export function ShowDetail() {
 
       {confirmingDelete && (
         <ConfirmDialog
-          message={`Completely remove "${show.name}" from your account?`}
+          message={`Delete "${show.name}" from your account?`}
           onConfirm={handleDelete}
           onCancel={() => setConfirmingDelete(false)}
         />
