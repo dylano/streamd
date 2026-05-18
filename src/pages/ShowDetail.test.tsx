@@ -114,10 +114,10 @@ describe("ShowDetail", () => {
       expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     });
     expect(
-      screen.getByText(/Completely remove "Scrubs" from your account\?/),
+      screen.getByText(/Delete "Scrubs" from your account\?/),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Remove" }));
+    await user.click(screen.getByRole("button", { name: "Delete" }));
 
     await waitFor(() => {
       expect(screen.getByText("Watchlist Page")).toBeInTheDocument();

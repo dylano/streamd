@@ -265,6 +265,7 @@ export function ShowDetail() {
       {confirmingDelete && (
         <ConfirmDialog
           message={`Delete "${show.name}" from your account?`}
+          confirmLabel="Delete"
           onConfirm={handleDelete}
           onCancel={() => setConfirmingDelete(false)}
         />
@@ -273,6 +274,7 @@ export function ShowDetail() {
       {confirmingDashboardRemoval && (
         <ConfirmDialog
           message={`Remove "${show.name}" episodes from your dashboard?`}
+          confirmLabel="Remove"
           onConfirm={handleDeactivate}
           onCancel={() => setConfirmingDashboardRemoval(false)}
         />
