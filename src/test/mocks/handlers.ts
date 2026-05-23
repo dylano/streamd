@@ -21,6 +21,7 @@ export const mockShows: Show[] = [
     current_season: 1,
     current_episode: 6,
     rating: null,
+    notes: null,
     added_at: "2024-01-01T00:00:00Z",
     updated_at: "2024-01-01T00:00:00Z",
   },
@@ -38,6 +39,7 @@ export const mockShows: Show[] = [
     current_season: 3,
     current_episode: 1,
     rating: null,
+    notes: null,
     added_at: "2024-01-02T00:00:00Z",
     updated_at: "2024-01-02T00:00:00Z",
   },
@@ -139,6 +141,7 @@ export const mockOtherUserShows: Show[] = [
     current_season: null,
     current_episode: null,
     rating: null,
+    notes: null,
     added_at: "2024-02-01T00:00:00Z",
     updated_at: "2024-02-01T00:00:00Z",
   },
@@ -156,6 +159,7 @@ export const mockOtherUserShows: Show[] = [
     current_season: 2,
     current_episode: 3,
     rating: null,
+    notes: null,
     added_at: "2024-01-01T00:00:00Z",
     updated_at: "2024-01-01T00:00:00Z",
   },
@@ -237,6 +241,7 @@ export const handlers = [
       current_season: body.current_season ?? 1,
       current_episode: body.current_episode ?? 1,
       rating: null,
+      notes: null,
       added_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -258,6 +263,13 @@ export const handlers = [
 
   http.get("/api/shows/:showId/episodes", ({ params }) => {
     const episodes = mockEpisodes.filter((e) => e.show_id === Number(params.showId));
+    return HttpResponse.json(episodes);
+  }),
+
+  http.get("/api/episodes", ({ request }) => {
+    const url = new URL(request.url);
+    const showId = Number(url.searchParams.get("show_id"));
+    const episodes = mockEpisodes.filter((e) => e.show_id === showId);
     return HttpResponse.json(episodes);
   }),
 

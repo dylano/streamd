@@ -14,6 +14,7 @@ export interface Show {
   current_season: number | null;
   current_episode: number | null;
   rating: number | null;
+  notes: string | null;
   added_at: string;
   updated_at: string;
 }
@@ -38,4 +39,5 @@ export interface UpdateShowInput {
   current_season?: number | null;
   current_episode?: number | null;
   rating?: number | null;
+  notes?: string | null;
 }
