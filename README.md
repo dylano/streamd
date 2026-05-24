@@ -115,6 +115,11 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.6.0
+
+- Personal notes for tracked shows — add free-text notes from the show detail page
+- "Add notes" link appears below the show description; notes display under a "My notes" header and are editable by tapping
+
 ### v1.5.0
 
 - Deactivate a show to remove it from the Dashboard without deleting it — use "Stop Watching" on the show detail page

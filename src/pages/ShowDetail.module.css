@@ -94,6 +94,95 @@
   line-height: 1.5;
 }
 
+.addNotesLink {
+  padding: 0;
+  font-size: 13px;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  margin: 0 0 16px;
+  display: inline-block;
+}
+
+.addNotesLink:hover {
+  text-decoration: underline;
+}
+
+.notesDisplay {
+  margin: 0 0 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  transition: border-color 0.15s;
+}
+
+.notesDisplay:hover {
+  border-color: var(--accent);
+}
+
+.notesHeader {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 4px;
+}
+
+.notesText {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.notesEditor {
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.notesTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 80px;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px 6px 0 6px;
+  padding: 8px 10px;
+  outline: none;
+}
+
+.notesTextarea:focus {
+  border-color: var(--accent);
+}
+
+.notesSaveButton {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  color: white;
+  background: var(--accent);
+  border: none;
+  border-radius: 0 0 4px 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.notesSaveButton:hover {
+  opacity: 0.85;
+}
+
 .meta {
   display: flex;
   justify-content: space-around;
@@ -238,5 +327,10 @@
 
   .providers {
     justify-content: center;
+  }
+
+  .notesHeader,
+  .notesText {
+    text-align: left;
   }
 }

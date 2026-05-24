@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS user_shows (
     current_season INTEGER,
     current_episode INTEGER,
     rating INTEGER,
+    notes TEXT,
     added_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (user_id, show_id),

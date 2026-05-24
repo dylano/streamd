@@ -25,6 +25,8 @@ export function ShowDetail() {
   const [pickingProvider, setPickingProvider] = useState(false);
   const [confirmingDashboardRemoval, setConfirmingDashboardRemoval] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notesValue, setNotesValue] = useState(show?.notes ?? "");
 
   useEffect(() => {
     if (show) {
@@ -32,6 +34,10 @@ export function ShowDetail() {
       void fetchTMDBShow(show.tmdb_id);
     }
   }, [show, fetchEpisodes, fetchTMDBShow]);
+
+  useEffect(() => {
+    if (!editingNotes) setNotesValue(show?.notes ?? "");
+  }, [show?.notes, editingNotes]);
 
   // Default to the most recent season when show data loads
   useEffect(() => {
@@ -75,6 +81,15 @@ export function ShowDetail() {
       }
     } finally {
       setSyncing(false);
+    }
+  }
+
+  async function handleSaveNotes() {
+    if (!show) return;
+    try {
+      await updateShow(show.id, { notes: notesValue.trim() || null });
+    } finally {
+      setEditingNotes(false);
     }
   }
 
@@ -185,6 +200,40 @@ export function ShowDetail() {
           )}
 
           {show.overview && <p className={styles.overview}>{show.overview}</p>}
+
+          {editingNotes ? (
+            <div className={styles.notesEditor}>
+              <textarea
+                className={styles.notesTextarea}
+                value={notesValue}
+                onChange={(e) => setNotesValue(e.target.value)}
+                onBlur={handleSaveNotes}
+                autoFocus
+                placeholder="Write your notes…"
+              />
+              <button
+                type="button"
+                className={styles.notesSaveButton}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={handleSaveNotes}
+              >
+                Save
+              </button>
+            </div>
+          ) : show.notes ? (
+            <div className={styles.notesDisplay} onClick={() => setEditingNotes(true)}>
+              <h3 className={styles.notesHeader}>My notes</h3>
+              <p className={styles.notesText}>{show.notes}</p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={styles.addNotesLink}
+              onClick={() => setEditingNotes(true)}
+            >
+              Add notes
+            </button>
+          )}
 
           <div className={styles.meta}>
             {show.status === "deactivated" ? (

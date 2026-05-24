@@ -18,7 +18,7 @@
 ## Data Model
 
 - **Shared metadata:** `shows` and `episodes` contain TMDB data shared across all users.
-- **Per-user state:** `user_shows` (status, bookmark, rating) and `user_episodes` (watched, watched_at) are join tables scoped by `user_id`.
+- **Per-user state:** `user_shows` (status, bookmark, rating, notes) and `user_episodes` (watched, watched_at) are join tables scoped by `user_id`.
 - **Users:** `users` table with `name` (unique, case-insensitive via `COLLATE NOCASE`) and `is_admin` flag (INTEGER, default 0).
 - The `UserGate` component in `src/components/UserGate.tsx` blocks the app until a user is identified. All data-fetching contexts (`ShowsProvider`, `SyncProvider`) mount only after user identity is established.
 
@@ -28,6 +28,7 @@
 - Use the `Intl` module for date/time formatting and locale-aware utilities. No locale hacks (e.g. `sv-SE` for date formatting) or third-party date libraries.
 - Imports from test utilities use `vite-plus/test`, not `vitest` directly.
 - Shared UI components (e.g. `ConfirmDialog`) go in `src/components/ui/`.
+- **Server state:** Managed manually via `ShowsContext` (`src/context/ShowsContext.tsx`) and module-level cache variables (episodes, trending). Mutations call the API then patch local state in-place. This pattern requires `useEffect` syncing in components that hold local edit state (e.g. the notes textarea in `ShowDetail`). See [#13](https://github.com/dylano/streamd/issues/13) for the planned migration to TanStack Query, which would replace this with query invalidation.
 - **Client-side caching:** Module-level variables cache API responses (episodes, trending) across component remounts to avoid loading flashes on tab/swipe navigation. Caches are updated inline on user actions (e.g. marking watched) and refreshed on sync.
 - **Swipe navigation:** `useSwipeNavigation` hook enables horizontal swipe between Dashboard and My Shows tabs (including from ShowDetail pages). Swipes trigger a slide-in CSS animation on the `<main>` element.
 - **Social browse:** Users can view other users' show lists via a dialog opened from the "What's everyone else watching?" link at the bottom of the My Shows page. The `UserShowsDialog` component (`src/components/ui/UserShowsDialog.tsx`) fetches users from `GET /api/users/all` and their shows from `GET /api/users/:id/shows`. Shows can be added directly from the dialog — the add flow mirrors the search dialog (fetches TMDB details, sets current season/episode, syncs episodes). `ShowCard` accepts an optional `onAdd` prop that renders a green "+" button and switches the card from a `<Link>` to a `<div>`.

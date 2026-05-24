@@ -16,6 +16,7 @@ interface Show {
   current_season: number | null;
   current_episode: number | null;
   rating: number | null;
+  notes: string | null;
   added_at: string;
   updated_at: string;
 }
@@ -25,7 +26,7 @@ function getShowForUser(db: D1Database, userId: number, showId: string) {
     .prepare(
       `SELECT s.id, s.tmdb_id, s.name, s.poster_path, s.overview, s.first_air_date,
               s.streaming_service, s.total_seasons, s.total_episodes,
-              us.status, us.current_season, us.current_episode, us.rating,
+              us.status, us.current_season, us.current_episode, us.rating, us.notes,
               us.added_at, us.updated_at
        FROM user_shows us
        JOIN shows s ON us.show_id = s.id
@@ -59,6 +60,7 @@ export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
     current_season?: number | null;
     current_episode?: number | null;
     rating?: number | null;
+    notes?: string | null;
   }>();
 
   // Update user_shows fields (status, bookmark)
@@ -80,6 +82,10 @@ export const onRequestPut: PagesFunction<Env, "id"> = async (context) => {
   if (body.rating !== undefined) {
     userUpdates.push("rating = ?");
     userValues.push(body.rating);
+  }
+  if (body.notes !== undefined) {
+    userUpdates.push("notes = ?");
+    userValues.push(body.notes);
   }
 
   if (userUpdates.length > 0) {
