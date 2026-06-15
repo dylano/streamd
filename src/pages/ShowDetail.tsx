@@ -121,6 +121,15 @@ export function ShowDetail() {
     if (!editingNotes) setNotesValue(show?.notes ?? "");
   }, [show?.notes, editingNotes]);
 
+  // Discard any in-progress note edit when switching shows (e.g. swiping
+  // mid-edit). The component stays mounted across swipes — only `id` changes —
+  // so without this the editing state carries forward to the next show. See #17.
+  useEffect(() => {
+    setEditingNotes(false);
+    setNotesValue(show?.notes ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
   // Default to the most recent season when show data loads
   useEffect(() => {
     if (tmdbShow?.seasons) {
