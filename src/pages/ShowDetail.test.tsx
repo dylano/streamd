@@ -30,6 +30,19 @@ function renderShowDetail(showId = "1") {
   );
 }
 
+function swipe(el: HTMLElement, startX: number, endX: number, startY = 200, endY = 200) {
+  el.dispatchEvent(
+    new TouchEvent("touchstart", {
+      touches: [{ clientX: startX, clientY: startY } as Touch],
+    }),
+  );
+  el.dispatchEvent(
+    new TouchEvent("touchend", {
+      changedTouches: [{ clientX: endX, clientY: endY } as Touch],
+    }),
+  );
+}
+
 describe("ShowDetail", () => {
   it("shows 'not found' for unknown show", async () => {
     renderShowDetail("999");
@@ -204,5 +217,92 @@ describe("ShowDetail", () => {
     await waitFor(() => {
       expect(screen.getByText("Watchlist Page")).toBeInTheDocument();
     });
+  });
+
+  // Mock shows sort alphabetically (ignoring leading "the"):
+  // "The Big Bang Theory" (id 2) -> "Scrubs" (id 1)
+  it("swipes left to the next show", async () => {
+    const { container } = renderShowDetail("2");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+
+    swipe(container.firstChild as HTMLElement, 300, 100);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+  });
+
+  it("swipes right to the previous show", async () => {
+    const { container } = renderShowDetail("1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    swipe(container.firstChild as HTMLElement, 100, 300);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("does not swipe past the last show", async () => {
+    const { container } = renderShowDetail("1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    // Scrubs is last in sort order; swiping left should stay put
+    swipe(container.firstChild as HTMLElement, 300, 100);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+    expect(
+      screen.queryByRole("heading", { name: "The Big Bang Theory" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not swipe past the first show", async () => {
+    const { container } = renderShowDetail("2");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+
+    // Big Bang Theory is first in sort order; swiping right should stay put
+    swipe(container.firstChild as HTMLElement, 100, 300);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+    expect(screen.queryByRole("heading", { name: "Scrubs" })).not.toBeInTheDocument();
+  });
+
+  it("ignores swipe below distance threshold", async () => {
+    const { container } = renderShowDetail("1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    swipe(container.firstChild as HTMLElement, 300, 270);
+
+    expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "The Big Bang Theory" }),
+    ).not.toBeInTheDocument();
   });
 });

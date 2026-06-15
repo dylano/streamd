@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import { useShows } from "../context/ShowsContext";
 import { useEpisodes } from "../hooks/useEpisodes";
 import { useTMDBShow, useTMDBSeason, parseStreamingProviders } from "../hooks/useTMDB";
@@ -8,6 +8,14 @@ import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { StarRating } from "../components/ui/StarRating";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
 import styles from "./ShowDetail.module.css";
+
+const SWIPE_THRESHOLD = 60;
+const SWIPE_MAX_Y = 80;
+let pendingSlideDir: "left" | "right" | null = null;
+
+function buildSortString(str: string) {
+  return str.replace(/^(a|an|the)\s+/i, "");
+}
 
 export function ShowDetail() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +35,59 @@ export function ShowDetail() {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState(show?.notes ?? "");
+  const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const startX = useRef(0);
+  const startY = useRef(0);
+
+  const sortedShows = [...shows].sort((a, b) => {
+    const aD = a.status === "deactivated" ? 1 : 0;
+    const bD = b.status === "deactivated" ? 1 : 0;
+    if (aD !== bD) return aD - bD;
+    return buildSortString(a.name).localeCompare(buildSortString(b.name));
+  });
+  const currentIdx = sortedShows.findIndex((s) => s.id === Number(id));
+  const prevId = currentIdx > 0 ? sortedShows[currentIdx - 1].id : null;
+  const nextId = currentIdx < sortedShows.length - 1 ? sortedShows[currentIdx + 1].id : null;
+
+  useLayoutEffect(() => {
+    if (pendingSlideDir) {
+      setSlideDir(pendingSlideDir);
+      pendingSlideDir = null;
+    }
+  }, [id]);
+
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX.current;
+      const dy = Math.abs(e.changedTouches[0].clientY - startY.current);
+      if (dy > SWIPE_MAX_Y || Math.abs(dx) < SWIPE_THRESHOLD) return;
+      if (dx < 0 && nextId !== null) {
+        pendingSlideDir = "left";
+        navigate(`/show/${nextId}`);
+      } else if (dx > 0 && prevId !== null) {
+        pendingSlideDir = "right";
+        navigate(`/show/${prevId}`);
+      }
+    },
+    [navigate, nextId, prevId],
+  );
+
+  useEffect(() => {
+    const el = pageRef.current;
+    if (!el) return;
+    el.addEventListener("touchstart", handleTouchStart, { passive: true });
+    el.addEventListener("touchend", handleTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", handleTouchStart);
+      el.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchEnd]);
 
   useEffect(() => {
     if (show) {
@@ -126,8 +187,15 @@ export function ShowDetail() {
     await refresh();
   }
 
+  const slideClass =
+    slideDir === "left" ? styles.slideLeft : slideDir === "right" ? styles.slideRight : "";
+
   return (
-    <div className={styles.page}>
+    <div
+      ref={pageRef}
+      className={`${styles.page} ${slideClass}`}
+      onAnimationEnd={() => setSlideDir(null)}
+    >
       <div className={styles.header}>
         {posterUrl && <img src={posterUrl} alt={show.name} className={styles.poster} />}
         <div className={styles.info}>

@@ -115,6 +115,10 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.6.1
+
+- Swipe left/right on a show detail page to move to the previous/next show (in the same order as My Shows), instead of jumping back to the Dashboard
+
 ### v1.6.0
 
 - Personal notes for tracked shows — add free-text notes from the show detail page

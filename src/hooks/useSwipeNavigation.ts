@@ -10,7 +10,7 @@ const SWIPE_MAX_Y = 80;
 function getRouteIndex(pathname: string): number {
   const exact = SWIPE_ROUTES.indexOf(pathname);
   if (exact !== -1) return exact;
-  if (pathname.startsWith("/show/")) return 1;
+  if (pathname.startsWith("/show/")) return -1;
   return -1;
 }
 
