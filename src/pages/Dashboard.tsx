@@ -165,6 +165,10 @@ export function Dashboard() {
       return dateB - dateA;
     });
 
+  // Order of shows in the Next Up list — passed to ShowDetail so swiping
+  // follows this list (by air date) rather than the alphabetical My Shows order.
+  const nextUpOrder = groups.map((g) => g.show_id);
+
   const showsWithExtra = groups
     .filter((g) => g.additionalEpisodes.length > 0)
     .sort((a, b) => a.show_name.localeCompare(b.show_name));
@@ -228,7 +232,11 @@ export function Dashboard() {
                         });
                     }}
                   >
-                    <Link to={`/show/${group.show_id}`} className={styles.showLink}>
+                    <Link
+                      to={`/show/${group.show_id}`}
+                      state={{ swipeOrder: nextUpOrder }}
+                      className={styles.showLink}
+                    >
                       {group.show_poster_path && (
                         <img
                           src={getPosterUrl(group.show_poster_path, "w92") ?? ""}

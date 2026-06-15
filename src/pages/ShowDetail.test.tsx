@@ -219,6 +219,47 @@ describe("ShowDetail", () => {
     });
   });
 
+  // When opened from the Dashboard, swipe follows the passed-in order (which
+  // differs from alphabetical). swipeOrder [1, 2] is the reverse of the
+  // alphabetical order [2, 1], so it only works if state is honored.
+  it("swipes in the order passed via navigation state (Dashboard entry)", async () => {
+    const { container } = render(
+      <MemoryRouter
+        initialEntries={[{ pathname: "/show/1", state: { swipeOrder: [1, 2] } }]}
+      >
+        <UserProvider>
+          <SettingsProvider>
+            <ShowsProvider>
+              <Routes>
+                <Route path="/show/:id" element={<ShowDetail />} />
+              </Routes>
+            </ShowsProvider>
+          </SettingsProvider>
+        </UserProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    // swipeOrder is [1, 2]; from Scrubs (id 1), next is Big Bang Theory (id 2).
+    swipe(container.firstChild as HTMLElement, 300, 100);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+
+    // Order must persist across the swipe: from id 2 (index 1), prev is id 1.
+    swipe(container.firstChild as HTMLElement, 100, 300);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+  });
+
   // Mock shows sort alphabetically (ignoring leading "the"):
   // "The Big Bang Theory" (id 2) -> "Scrubs" (id 1)
   it("swipes left to the next show", async () => {
