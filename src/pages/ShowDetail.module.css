@@ -219,38 +219,51 @@
   color: var(--accent);
 }
 
-.deleteButton {
+.pauseButton,
+.trashButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  color: #ef4444;
-  background: transparent;
-  border: 1px solid #ef4444;
-  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: filter 0.15s;
 }
 
-.deleteButton:hover {
-  background: rgba(239, 68, 68, 0.1);
+.pauseButton {
+  background: #eab308;
+}
+
+.trashButton {
+  background: #ef4444;
+}
+
+.pauseButton:hover,
+.trashButton:hover {
+  filter: brightness(1.1);
 }
 
 .resumeButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  color: #16a34a;
-  background: transparent;
-  border: 1px solid #16a34a;
-  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #fff;
+  background: #16a34a;
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: filter 0.15s;
 }
 
 .resumeButton:hover {
-  background: rgba(22, 163, 74, 0.1);
+  filter: brightness(1.1);
 }
 
 .seasons {

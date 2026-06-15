@@ -6,6 +6,9 @@ import { useTMDBShow, useTMDBSeason, parseStreamingProviders } from "../hooks/us
 import { EpisodeRow, ProviderPicker } from "../components/shows";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { StarRating } from "../components/ui/StarRating";
+import { PauseIcon } from "../components/ui/PauseIcon";
+import { PlayIcon } from "../components/ui/PlayIcon";
+import { TrashIcon } from "../components/ui/TrashIcon";
 import { getPosterUrl, getLogoUrl } from "../utils/images";
 import styles from "./ShowDetail.module.css";
 
@@ -327,24 +330,30 @@ export function ShowDetail() {
                 onClick={handleReactivate}
                 className={styles.resumeButton}
                 type="button"
+                aria-label="Resume Watching"
+                title="Resume Watching"
               >
-                Resume Watching
+                <PlayIcon size={18} />
               </button>
             ) : (
               <button
                 onClick={() => setConfirmingDashboardRemoval(true)}
-                className={styles.deleteButton}
+                className={styles.pauseButton}
                 type="button"
+                aria-label="Pause Watching"
+                title="Pause Watching"
               >
-                Stop Watching
+                <PauseIcon size={18} />
               </button>
             )}
             <button
               onClick={() => setConfirmingDelete(true)}
-              className={styles.deleteButton}
+              className={styles.trashButton}
               type="button"
+              aria-label="Delete Show"
+              title="Delete Show"
             >
-              Delete Show
+              <TrashIcon size={18} />
             </button>
           </div>
         </div>
@@ -408,8 +417,9 @@ export function ShowDetail() {
 
       {confirmingDashboardRemoval && (
         <ConfirmDialog
-          message={`Remove "${show.name}" episodes from your dashboard?`}
-          confirmLabel="Remove"
+          message={`Stop watching "${show.name}" and remove the episodes from your dashboard?`}
+          confirmLabel="Pause"
+          confirmVariant="warning"
           onConfirm={handleDeactivate}
           onCancel={() => setConfirmingDashboardRemoval(false)}
         />
