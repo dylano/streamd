@@ -68,6 +68,14 @@
   background: #b91c1c;
 }
 
+.confirmButton.warning {
+  background: #eab308;
+}
+
+.confirmButton.warning:hover {
+  background: #ca9a04;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

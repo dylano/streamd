@@ -106,6 +106,23 @@ describe("ShowDetail", () => {
     });
   });
 
+  it("renders Pause Watching and Delete Show as icon-only buttons", async () => {
+    renderShowDetail("1");
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    const stopButton = screen.getByRole("button", { name: "Pause Watching" });
+    const deleteButton = screen.getByRole("button", { name: "Delete Show" });
+
+    // Labelled for accessibility, but rendered as an SVG icon (no text content).
+    expect(stopButton.textContent).toBe("");
+    expect(stopButton.querySelector("svg")).not.toBeNull();
+    expect(deleteButton.textContent).toBe("");
+    expect(deleteButton.querySelector("svg")).not.toBeNull();
+  });
+
   it("navigates to watchlist after delete", async () => {
     const user = userEvent.setup();
 
@@ -169,7 +186,7 @@ describe("ShowDetail", () => {
     });
 
     expect(screen.getByRole("button", { name: "Resume Watching" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Stop Watching" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Pause Watching" })).not.toBeInTheDocument();
   });
 
   it("navigates to watchlist after deactivating a show", async () => {
@@ -203,16 +220,16 @@ describe("ShowDetail", () => {
       expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: "Stop Watching" }));
+    await user.click(screen.getByRole("button", { name: "Pause Watching" }));
 
     await waitFor(() => {
       expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     });
     expect(
-      screen.getByText(/Remove "Scrubs" episodes from your dashboard\?/),
+      screen.getByText(/Stop watching "Scrubs" and remove the episodes from your dashboard\?/),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Remove" }));
+    await user.click(screen.getByRole("button", { name: "Pause" }));
 
     await waitFor(() => {
       expect(screen.getByText("Watchlist Page")).toBeInTheDocument();

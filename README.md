@@ -115,6 +115,11 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.7.0
+
+- Show detail action buttons are now icons instead of text — a yellow pause button to stop watching, a green play button to resume a paused show, and a red trash button to delete
+- The "stop watching" confirmation now uses a matching yellow confirm button (red is reserved for delete)
+
 ### v1.6.1
 
 - Swipe left/right on a show detail page to move to the previous/next show, instead of jumping back to the Dashboard
