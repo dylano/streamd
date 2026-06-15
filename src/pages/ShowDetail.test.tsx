@@ -364,6 +364,35 @@ describe("ShowDetail", () => {
     ).not.toBeInTheDocument();
   });
 
+  // Regression for #17: the component stays mounted across swipes (only the
+  // route param changes), so an in-progress note edit must be discarded rather
+  // than carried forward to the swiped-to show.
+  it("discards in-progress note edits when swiping to another show", async () => {
+    const user = userEvent.setup();
+    // Start on Big Bang Theory (id 2); next in sort order is Scrubs (id 1).
+    const { container } = renderShowDetail("2");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Add notes" }));
+    await user.type(screen.getByPlaceholderText("Write your notes…"), "unsaved draft");
+
+    swipe(container.firstChild as HTMLElement, 300, 100);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    // The draft must not carry forward: Scrubs has no notes, so it shows the
+    // "Add notes" affordance and no textarea holding the previous text.
+    expect(screen.getByRole("button", { name: "Add notes" })).toBeInTheDocument();
+    expect(screen.queryByDisplayValue("unsaved draft")).not.toBeInTheDocument();
+  });
+
   it("back button returns to the entry point after swiping (swipe replaces history)", async () => {
     const user = userEvent.setup();
 

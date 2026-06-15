@@ -115,6 +115,10 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.7.1
+
+- Fixed a bug where swiping between shows while editing a show's notes would carry the in-progress edit forward to the next show — unsaved note edits are now discarded when you swipe to another show
+
 ### v1.7.0
 
 - Show detail action buttons are now icons instead of text — a yellow pause button to stop watching, a green play button to resume a paused show, and a red trash button to delete
