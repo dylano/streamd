@@ -115,6 +115,12 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.6.1
+
+- Swipe left/right on a show detail page to move to the previous/next show, instead of jumping back to the Dashboard
+- Swipe order follows the list you came from — the Dashboard's "Next Up" order when opened from the Dashboard, otherwise the My Shows order
+- The back button returns to wherever you opened the show from, rather than walking back through each show you swiped past
+
 ### v1.6.0
 
 - Personal notes for tracked shows — add free-text notes from the show detail page

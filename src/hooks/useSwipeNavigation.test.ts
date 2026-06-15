@@ -100,16 +100,16 @@ describe("useSwipeNavigation", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("navigates to dashboard on swipe right from show detail", () => {
+  it("does not navigate on swipe right from show detail (handled by ShowDetail)", () => {
     mockPathname = "/show/123";
     const ref = createRef(el);
     renderHook(() => useSwipeNavigation(ref));
 
     swipe(el, 100, 300);
-    expect(mockNavigate).toHaveBeenCalledWith("/");
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("does not navigate on swipe left from show detail (already last)", () => {
+  it("does not navigate on swipe left from show detail (handled by ShowDetail)", () => {
     mockPathname = "/show/123";
     const ref = createRef(el);
     renderHook(() => useSwipeNavigation(ref));
