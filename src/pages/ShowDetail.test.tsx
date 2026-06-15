@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vite-plus/test";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { server } from "../test/mocks/server";
 import { UserProvider } from "../context/UserContext";
@@ -301,6 +301,59 @@ describe("ShowDetail", () => {
     swipe(container.firstChild as HTMLElement, 300, 270);
 
     expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "The Big Bang Theory" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("back button returns to the entry point after swiping (swipe replaces history)", async () => {
+    const user = userEvent.setup();
+
+    function BackButton() {
+      const navigate = useNavigate();
+      return (
+        <button onClick={() => navigate(-1)} type="button">
+          Go Back
+        </button>
+      );
+    }
+
+    // Simulate arriving at a show from My Shows: history is [/watchlist, /show/2]
+    const { container } = render(
+      <MemoryRouter initialEntries={["/watchlist", "/show/2"]} initialIndex={1}>
+        <UserProvider>
+          <SettingsProvider>
+            <ShowsProvider>
+              <BackButton />
+              <Routes>
+                <Route path="/show/:id" element={<ShowDetail />} />
+                <Route path="/watchlist" element={<div>My Shows Page</div>} />
+              </Routes>
+            </ShowsProvider>
+          </SettingsProvider>
+        </UserProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "The Big Bang Theory" }),
+      ).toBeInTheDocument();
+    });
+
+    // Swipe to the next show (Scrubs). With replace, this does NOT push history.
+    swipe(container.querySelector("[class]") as HTMLElement, 300, 100);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "Scrubs" })).toBeInTheDocument();
+    });
+
+    // Back should land on My Shows, not the previously-swiped show.
+    await user.click(screen.getByRole("button", { name: "Go Back" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("My Shows Page")).toBeInTheDocument();
+    });
     expect(
       screen.queryByRole("heading", { name: "The Big Bang Theory" }),
     ).not.toBeInTheDocument();

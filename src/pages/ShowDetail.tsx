@@ -67,12 +67,14 @@ export function ShowDetail() {
       const dx = e.changedTouches[0].clientX - startX.current;
       const dy = Math.abs(e.changedTouches[0].clientY - startY.current);
       if (dy > SWIPE_MAX_Y || Math.abs(dx) < SWIPE_THRESHOLD) return;
+      // replace (not push) so swiping between shows doesn't pile up history
+      // entries — the back button returns to wherever the show was opened from.
       if (dx < 0 && nextId !== null) {
         pendingSlideDir = "left";
-        navigate(`/show/${nextId}`);
+        navigate(`/show/${nextId}`, { replace: true });
       } else if (dx > 0 && prevId !== null) {
         pendingSlideDir = "right";
-        navigate(`/show/${prevId}`);
+        navigate(`/show/${prevId}`, { replace: true });
       }
     },
     [navigate, nextId, prevId],
