@@ -43,6 +43,7 @@ export function ShowDetail() {
   const pageRef = useRef<HTMLDivElement>(null);
   const startX = useRef(0);
   const startY = useRef(0);
+  const initializedShowId = useRef<string | undefined>(undefined);
 
   // Swipe order depends on where the show was opened from. The Dashboard passes
   // its "Next Up" order via navigation state; otherwise fall back to the
@@ -130,15 +131,22 @@ export function ShowDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Default to the most recent season when show data loads
+  // Default to the most recent season when a show first loads — but only once
+  // per show. Marking an episode watched triggers refresh() -> a fresh TMDB
+  // fetch -> a new tmdbShow object; without the per-id guard that would snap the
+  // user back to the latest season mid-edit (see #21). The tmdb_id check guards
+  // against a stale fetch (e.g. during a swipe) seeding the wrong default.
   useEffect(() => {
-    if (tmdbShow?.seasons) {
+    if (tmdbShow?.seasons && tmdbShow.id === show?.tmdb_id && initializedShowId.current !== id) {
       const maxSeason = Math.max(
         ...tmdbShow.seasons.filter((s) => s.season_number > 0).map((s) => s.season_number),
       );
-      if (maxSeason > 0) setSelectedSeason(maxSeason);
+      if (maxSeason > 0) {
+        setSelectedSeason(maxSeason);
+        initializedShowId.current = id;
+      }
     }
-  }, [tmdbShow]);
+  }, [tmdbShow, id, show?.tmdb_id]);
 
   if (!show) {
     return (

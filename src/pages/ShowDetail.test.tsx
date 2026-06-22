@@ -98,6 +98,35 @@ describe("ShowDetail", () => {
     expect(screen.getByText("Season 1")).toBeInTheDocument();
   });
 
+  // Regression for #21: marking an episode watched triggers refresh() -> a fresh
+  // TMDB fetch -> a new tmdbShow object. The default-season effect must not snap
+  // the user back to the latest season; they should stay on the season they were
+  // operating on. TMDB mock returns 3 seasons, so the page defaults to S3.
+  it("stays on the selected season after marking an episode watched", async () => {
+    const user = userEvent.setup();
+    renderShowDetail("1");
+
+    // Defaults to the most recent season (S3) on load.
+    await waitFor(() => {
+      expect(screen.getByText("Season 3")).toBeInTheDocument();
+    });
+
+    // Switch to S1 (which has the mock episodes).
+    await user.click(screen.getByRole("button", { name: "S1" }));
+    await waitFor(() => {
+      expect(screen.getByText("Season 1")).toBeInTheDocument();
+    });
+
+    // Mark the unwatched S1 episode watched — this fires markWatched + refresh.
+    await user.click(screen.getByRole("button", { name: "Mark as watched" }));
+
+    // The view must remain on Season 1, not jump back to Season 3.
+    await waitFor(() => {
+      expect(screen.queryByText("Season 3")).not.toBeInTheDocument();
+    });
+    expect(screen.getByText("Season 1")).toBeInTheDocument();
+  });
+
   it("shows streaming provider icon", async () => {
     renderShowDetail("1");
 
