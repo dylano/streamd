@@ -44,6 +44,7 @@
 
 ## Testing
 
+- **Use the npm scripts, not `npx`.** This project runs on the `vite-plus` (`vp`) toolchain — `npx vitest` fails because tests import from `vite-plus/test`, not `vitest`. Run all tests with `npm run test:run`; scope to specific files with `npm run test:run -- src/pages/Foo.test.tsx`. Same goes for build/lint — prefer `npm run build` / `npm run lint` over invoking tools directly.
 - MSW handles all API mocking. Handlers in `src/test/mocks/handlers.ts`, server setup in `src/test/mocks/server.ts`.
 - Test setup seeds localStorage with a mock user and calls `setApiUserId()` so providers work without a real backend.
 - Page components need `<MemoryRouter>`, `<UserProvider>`, `<SettingsProvider>`, and usually `<ShowsProvider>` as wrappers.

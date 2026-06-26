@@ -7,6 +7,7 @@ import { server } from "../test/mocks/server";
 import { mockUnwatchedEpisodes } from "../test/mocks/handlers";
 import { UserProvider } from "../context/UserContext";
 import { SettingsProvider } from "../context/SettingsContext";
+import { ShowsProvider } from "../context/ShowsContext";
 import { Dashboard } from "./Dashboard";
 
 function renderDashboard() {
@@ -14,7 +15,9 @@ function renderDashboard() {
     <MemoryRouter>
       <UserProvider>
         <SettingsProvider>
-          <Dashboard />
+          <ShowsProvider>
+            <Dashboard />
+          </ShowsProvider>
         </SettingsProvider>
       </UserProvider>
     </MemoryRouter>,

@@ -6,6 +6,7 @@ import { parseLocalDate, formatAirDate } from "../utils/dates";
 import { parseStreamingProviders, useTMDBTrending } from "../hooks/useTMDB";
 import { useSettings } from "../context/SettingsContext";
 import { useSync } from "../context/SyncContext";
+import { useShows } from "../context/ShowsContext";
 import type { UnwatchedEpisode } from "../types";
 import styles from "./Dashboard.module.css";
 
@@ -32,6 +33,7 @@ export function Dashboard() {
   const { results: trending, fetchTrending, refreshTrending } = useTMDBTrending();
   const { settings } = useSettings();
   const { syncing } = useSync();
+  const { refresh: refreshShows } = useShows();
 
   const fetchEpisodes = useCallback(async () => {
     try {
@@ -76,6 +78,10 @@ export function Dashboard() {
     if (markingIds.has(episodeId)) return;
     setMarkingIds((prev) => new Set(prev).add(episodeId));
     await api.put(`/episodes/${episodeId}`, { watched: true });
+    // Marking watched recomputes the show's bookmark server-side; refresh the
+    // shared shows cache so the My Shows marker stays in sync with the Dashboard
+    // (mirrors ShowDetail, which refreshes after markWatched). See #24.
+    void refreshShows();
     await new Promise((resolve) => setTimeout(resolve, 300));
     setCollapsingIds((prev) => new Set(prev).add(episodeId));
     await new Promise((resolve) => setTimeout(resolve, 300));
