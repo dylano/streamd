@@ -1,3 +1,5 @@
+import { recomputeBookmark } from "../episodes/_bookmark";
+
 interface Env {
   DB: D1Database;
   TMDB_API_KEY: string;
@@ -96,6 +98,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           totalSynced++;
         }
       }
+
+      // Newly synced episodes may now sit after a "caught up" (NULL) bookmark,
+      // so recompute it to keep the My Shows marker in sync with the Dashboard.
+      await recomputeBookmark(context.env.DB, userId, show.id);
 
       results.push({ show: show.name, synced: totalSynced });
     } catch (err) {
