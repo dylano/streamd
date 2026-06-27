@@ -96,6 +96,33 @@ describe("Dashboard", () => {
     });
   });
 
+  it("refetches the shows cache after marking watched so My Shows stays in sync", async () => {
+    // Marking watched recomputes the bookmark server-side; the Dashboard must
+    // refresh the shared ShowsContext or the My Shows marker goes stale (#24).
+    const user = userEvent.setup();
+    let showsFetchCount = 0;
+    server.use(
+      http.get("/api/shows", () => {
+        showsFetchCount++;
+        return HttpResponse.json([]);
+      }),
+    );
+
+    renderDashboard();
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+    // ShowsProvider fetches the list once on mount.
+    await waitFor(() => expect(showsFetchCount).toBeGreaterThan(0));
+    const countBeforeClick = showsFetchCount;
+
+    const watchButtons = screen.getAllByTitle("Mark as watched");
+    await user.click(watchButtons[0]);
+
+    await waitFor(() => expect(showsFetchCount).toBe(countBeforeClick + 1));
+  });
+
   it("sends timezone query param", async () => {
     let capturedUrl = "";
     server.use(
