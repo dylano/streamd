@@ -115,6 +115,10 @@ Push to main — Cloudflare auto-deploys. CI runs lint, tests, and build on PRs.
 
 ## Release Notes
 
+### v1.7.3
+
+- Fixed the episode marker on the My Shows page disagreeing with the Dashboard
+
 ### v1.7.2
 
 - Fixed a bug where marking an episode watched while viewing an earlier season would jump the page back to the most recent season — the season you're working on now stays selected
